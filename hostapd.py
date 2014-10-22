@@ -40,17 +40,17 @@ class Hostapd(object):
 
         for k in basic:
             if self._config[k] is None:
-                raise ValueError("Missing required {} option".format(k))
+                raise ValueError("Missing required {0} option".format(k))
 
         if 'bridge' in self._config:
             for k in bridge:
                 if self._config[k] is None:
-                    raise ValueError("Missing required {} option for bridge".format(k))
+                    raise ValueError("Missing required {0} option for bridge".format(k))
 
         if 'ssid' in self._config:
             for k in wireless:
                 if self._config[k] is None:
-                    raise ValueError("Missing required {} option for wireless".format(k))
+                    raise ValueError("Missing required {0} option for wireless".format(k))
             self._config['channel'] = int(self._config['channel'])  # will raise value error if not int
 
         if 'wpa' in self._config:
@@ -59,7 +59,7 @@ class Hostapd(object):
                 raise ValueError("Wpa option is not valid")
             for k in auth:
                 if self._config[k] is None:
-                    raise ValueError("Missing required {} option for wireless security".format(k))
+                    raise ValueError("Missing required {0} option for wireless security".format(k))
             if self._config['wpa'] in [1, 3]:
                 if not self._config['wpa_pairwise']:
                     raise ValueError("Missing required option for wireless security : wpa_pairwise")
@@ -108,12 +108,12 @@ class Hostapd(object):
 
         with open(path, "r") as hostapd:
             for line in hostapd:
-                if line.startswith('#') is True:
+                if line.startswith('#') is True or line == "\n":
                     pass
                 else:
                     param, value = line.split("=")
                     if param and value:
-                        self.set(param, value)
+                        self.set(param.strip(), value.strip())
 
     def write(self, path=None):
         self.validate()
@@ -125,7 +125,7 @@ class Hostapd(object):
 
         with toolutils.atomic_write(path) as hostapd:
             for k, v in self._config.iteritems():
-                hostapd.write("{}={}\n".format(str(k).strip(), str(v).strip()))
+                hostapd.write("{0}={1}\n".format(str(k).strip(), str(v).strip()))
 
     def controlService(self, action):
         ''' return True/False, command output '''
