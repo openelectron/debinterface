@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+import os
+import shutil
 import socket
 import toolutils
 
@@ -27,7 +30,8 @@ class DnsmasqRange(object):
                 self._config["dhcp-range"] = []
             if isinstance(value, str):
                 value = self._extract_range_info(value)
-            self._config["dhcp-range"].append(value)
+            if value:
+                self._config["dhcp-range"].append(value)
         else:
             self._config[str(key).strip()] = value
 
@@ -42,6 +46,7 @@ class DnsmasqRange(object):
                 socket.inet_aton(r["end"])
                 if r["start"] > r["end"]:
                     raise ValueError("Start IP range must be before end IP")
+                return True
         except KeyError:
             pass  # dhcp-range is not mandatory
 
@@ -53,7 +58,7 @@ class DnsmasqRange(object):
                 if dhcp_range is None:
                     dhcp_range = {
                         'interface': new_ranges["name"], 'lease_time': '24h',
-                        "start": "", "end": ""
+                        "start": "10.1.10.11", "end": "10.1.10.250"  # better than nothing
                     }
                 dhcp_range["start"] = new_ranges["range_ip_start"]
                 dhcp_range["end"] = new_ranges["range_ip_end"]
@@ -98,11 +103,11 @@ class DnsmasqRange(object):
             for line in dnsmasq:
                 if line.startswith('#') is True or line == "\n" or line == "":
                     continue
-                else:
-                    key, value = line.split("=")
+                # No \n allowed here
+                key, value = line.replace("\n", '').split("=")
 
-                    if key and value:
-                        self.set(key, value)
+                if key and value:
+                    self.set(key, value)
 
     def write(self, path=None):
         self.validate()
@@ -114,8 +119,9 @@ class DnsmasqRange(object):
 
         with toolutils.atomic_write(path) as dnsmasq:
             for k, v in self._config.iteritems():
-                import ipdb;ipdb.set_trace()
                 if k == "dhcp-range":
+                    if not v:
+                        continue
                     for r in v:
                         dnsmasq.write("dhcp-range=interface:{0},{1},{2},{3}\n".format(
                             r["interface"], r["start"], r["end"], r["lease_time"]
@@ -134,25 +140,28 @@ class DnsmasqRange(object):
         ''' return True/False, command output '''
 
         if self.backup_path:
-            return toolutils.safe_subprocess(["cp", self._path, self.backup_path])
+            shutil.copy(self._path, self.backup_path)
 
     def restore(self):
         ''' return True/False, command output '''
 
         if self.backup_path:
-            return toolutils.safe_subprocess(["cp", self.backup_path, self._path])
+            shutil.copy(self.backup_path, self._path)
 
     def delete(self):
         ''' return True/False, command output '''
 
         if self.backup_path:
-            return toolutils.safe_subprocess(["rm", self._path])
+            os.remove(self._path)
 
     def _extract_range_info(self, value):
         ret = {}
-        breaked = value.split(",")
-        ret["interface"] = breaked[0].split(":")[1]
-        ret["start"] = breaked[1]
-        ret["end"] = breaked[2]
-        ret["lease_time"] = breaked[3]
+        try:
+            breaked = value.split(",")
+            ret["interface"] = breaked[0].split(":")[1]
+            ret["start"] = breaked[1]
+            ret["end"] = breaked[2]
+            ret["lease_time"] = breaked[3]
+        except:
+            pass
         return ret

@@ -15,7 +15,7 @@ class InterfacesReader:
         return self._adapters
 
     def parse_interfaces(self):
-        ''' Read /etc/network/interfaces.
+        ''' Read /etc/network/interfaces (or specified file).
             Save adapters
             Return an array of networkAdapter instances.
         '''
@@ -44,7 +44,7 @@ class InterfacesReader:
                 if line.strip().startswith("#") is True or line == "\n" or line == "":
                     pass
                 else:
-                    self._parse_iface(line)
+                    self._parse_iface(line.replace("\n", ""))
                     # Ignore blank lines.
                     if line.isspace() is True:
                         pass

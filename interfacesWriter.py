@@ -1,4 +1,5 @@
 # Write interface
+import shutil
 from string import Template
 import toolutils
 
@@ -138,10 +139,10 @@ class InterfacesWriter:
         ''' return True/False, command output '''
 
         if self._backup_path:
-            return toolutils.safe_subprocess(["cp", self._interfaces_path, self._backup_path])
+            shutil.copy(self._interfaces_path, self.backup_path)
 
     def _restore_interfaces(self):
         ''' return True/False, command output '''
 
         if self._backup_path:
-            return toolutils.safe_subprocess(["cp", self._backup_path, self._interfaces_path])
+            shutil.copy(self.backup_path, self._interfaces_path)

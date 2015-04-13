@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import socket
 
 
@@ -48,7 +49,7 @@ class NetworkAdapter:
                 if not isinstance(val, validations['type']):
                     raise ValueError("{0} should be {1}".format(opt, str(validations['type'])))
         if 'in' in validations:
-            if not val in validations['in']:
+            if val not in validations['in']:
                 raise ValueError("{0} should be in {1}".format(opt, ", ".join(validations['in'])))
 
     def validateIP(self, ip):
@@ -182,7 +183,7 @@ class NetworkAdapter:
 
     def setUnknown(self, key, val):
         ''' it's impossible to know about all available options, so storing uncommon ones as if '''
-        if not 'unknown' in self._ifAttributes:
+        if 'unknown' not in self._ifAttributes:
             self._ifAttributes['unknown'] = {}
         self._ifAttributes['unknown'][key] = val
 

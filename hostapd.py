@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+import os
+import shutil
 import toolutils
 
 
@@ -30,7 +33,9 @@ class Hostapd(object):
             wireless if you want to be an AP, auth if you want to add
             some security, bridge for, well, bridging
             Not foul proof !
-            Raise KeyError and ValueError
+            Raises:
+                KeyError : missing key
+                ValueError : invalid data
         '''
 
         basic = ['interface', 'driver']
@@ -66,9 +71,10 @@ class Hostapd(object):
             if self._config['wpa'] in [2, 3]:
                 if not self._config['rsn_pairwise']:
                     raise ValueError("Missing required option for wireless security rsn_pairwise")
+        return True
 
     def set_defaults(self):
-        ''' Defaults for my needs, you should probably override this one '''
+        ''' ssid and wpa_passphrase defaults to cashpad-FTED and cashpad-GH67 '''
         self._config = {
             'interface': 'wlan0',
             'driver': 'nl80211',
@@ -92,7 +98,9 @@ class Hostapd(object):
             'eapol_version': 1,
 
             # wifi auth
-            # please note ssid and wpa-passphrase are missing
+            'channel': 4,
+            'ssid': 'cashpad-FTED',
+            'wpa_passphrase': 'cashpad-GH67',
             'auth_algs': 3,
             'wpa': 3,  # WPA + WPA2. set to 2 to restrict to WPA2
             'wpa_key_mgmt': 'WPA-PSK',
@@ -111,7 +119,7 @@ class Hostapd(object):
                 if line.startswith('#') is True or line == "\n" or line == "":
                     pass
                 else:
-                    param, value = line.split("=")
+                    param, value = line.replace("\n", "").split("=")
                     if param and value:
                         self.set(param.strip(), value.strip())
 
@@ -138,16 +146,16 @@ class Hostapd(object):
         ''' return True/False, command output '''
 
         if self.backup_path:
-            return toolutils.safe_subprocess(["cp", self._path, self.backup_path])
+            shutil.copy(self._path, self.backup_path)
 
     def restore(self):
         ''' return True/False, command output '''
 
         if self.backup_path:
-            return toolutils.safe_subprocess(["cp", self.backup_path, self._path])
+            shutil.copy(self.backup_path, self._path)
 
     def delete(self):
         ''' return True/False, command output '''
 
         if self.backup_path:
-            return toolutils.safe_subprocess(["rm", self._path])
+            os.remove(self._path)
