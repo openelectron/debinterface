@@ -16,8 +16,15 @@ class NetworkAdapter:
         'gateway': {'type': 'IP'},
         'bridge-opts': {'type': dict},
         'addrFam': {'in': ['inet', 'inet6', 'ipx']},
-        'source': {'in': ['dhcp', 'static', 'loopback', 'manual', 'bootp', 'ppp', 'wvdial', 'dynamic', 'ipv4ll', 'v4tunnel']},
-        'hostapd': {}
+        'source': {'in': ['dhcp', 'static', 'loopback', 'manual',
+                          'bootp', 'ppp', 'wvdial', 'dynamic', 'ipv4ll', 'v4tunnel']},
+        'hostapd': {},
+        'bridge-opts': {'type': dict},
+        'up': {'type': list},
+        'down': {'type': list},
+        'pre-up': {'type': list},
+        'post-down': {'type': list}
+
     }
 
     def validateAll(self):
@@ -28,6 +35,16 @@ class NetworkAdapter:
             if k in self._ifAttributes:
                 val = self._ifAttributes[k]
             self.validateOne(k, v, val)
+
+        # Logic checks
+        if self._ifAttributes["source"] == "static":
+            for req in ["address", "netmask"]:
+                if req not in self._ifAttributes:
+                    raise ValueError("{0} field is required for static interface".format(req))
+        elif self._ifAttributes["source"] == "dhcp":
+            for req in ["address", "netmask"]:
+                if req in self._ifAttributes:
+                    raise ValueError("{0} field is forbidden for dhcp interface".format(req))
 
     def validateOne(self, opt, validations, val):
         ''' Not thorough validations... and quick coded. Raise ValueError '''
@@ -159,7 +176,7 @@ class NetworkAdapter:
         self._ifAttributes['down'] = down
 
     def appendDown(self, cmd):
-        self._ifAttributes['down'].append(cmd)
+        self._ensure_list(self._ifAttributes, "down", cmd)
 
     def setPreUp(self, pre):
         '''
@@ -169,7 +186,7 @@ class NetworkAdapter:
         self._ifAttributes['pre-up'] = pre
 
     def appendPreUp(self, cmd):
-        self._ifAttributes['pre-up'].append(cmd)
+        self._ensure_list(self._ifAttributes, "pre-up", cmd)
 
     def setPostDown(self, post):
         '''
@@ -179,7 +196,7 @@ class NetworkAdapter:
         self._ifAttributes['post-down'] = post
 
     def appendPostDown(self, cmd):
-        self._ifAttributes['post-down'].append(cmd)
+        self._ensure_list(self._ifAttributes, "post-down", cmd)
 
     def setUnknown(self, key, val):
         ''' it's impossible to know about all available options, so storing uncommon ones as if '''
@@ -283,3 +300,13 @@ class NetworkAdapter:
                 raise
         else:
             raise ValueError("No arguments given. Provide a name or options dict.")
+
+    def _ensure_list(self, dic, key, value):
+        """Ensure the data for the given key will be in a list. If value is a list, will be flattened"""
+        if key not in dic:
+            dic[key] = []
+        if type(dic[key]) != list:
+            tmp = dic[key]
+            dic[key] = [tmp]
+        if type(value) == list:
+            dic[key] += value

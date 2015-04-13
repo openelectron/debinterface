@@ -41,10 +41,11 @@ class InterfacesReader:
             for line in interfaces:
                 # Identify the clauses by analyzing the first word of each line.
                 # Go to the next line if the current line is a comment.
-                if line.strip().startswith("#") is True or line == "\n" or line == "":
+                # line = line.strip().replace("\n", "")
+                if not line or line.strip().startswith("#") is True:
                     pass
                 else:
-                    self._parse_iface(line.replace("\n", ""))
+                    self._parse_iface(line)
                     # Ignore blank lines.
                     if line.isspace() is True:
                         pass
@@ -58,13 +59,13 @@ class InterfacesReader:
             sline = line.split()
             # Update the self._context when an iface clause is encountered.
             self._context += 1
-            self._adapters.append(NetworkAdapter(sline[1]))
-            self._adapters[self._context].setAddressSource(sline[-1])
-            self._adapters[self._context].setAddrFam(sline[2])
+            self._adapters.append(NetworkAdapter(sline[1].strip()))
+            self._adapters[self._context].setAddressSource(sline[-1].strip())
+            self._adapters[self._context].setAddrFam(sline[2].strip())
 
     def _parse_details(self, line):
         if line[0].isspace() is True:
-            sline = line.split()
+            sline = [x.strip() for x in line.split()]
             if sline[0] == 'address':
                 self._adapters[self._context].setAddress(sline[1])
             elif sline[0] == 'netmask':
@@ -98,7 +99,7 @@ class InterfacesReader:
     def _read_auto(self, line):
         ''' Identify which adapters are flagged auto. '''
         if line.startswith('auto'):
-            sline = line.split()
+            sline = [x.strip() for x in line.split()]
             for word in sline:
                 if word == 'auto':
                     pass
@@ -108,7 +109,7 @@ class InterfacesReader:
     def _read_hotplug(self, line):
         ''' Identify which adapters are flagged allow-hotplug. '''
         if line.startswith('allow-hotplug'):
-            sline = line.split()
+            sline = [x.strip() for x in line.split()]
             for word in sline:
                 if word == 'allow-hotplug':
                     pass
