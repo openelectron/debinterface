@@ -108,7 +108,7 @@ class Hostapd(object):
 
         with open(path, "r") as hostapd:
             for line in hostapd:
-                if line.startswith('#') is True or line == "\n":
+                if line.startswith('#') is True or line == "\n" or line == "":
                     pass
                 else:
                     param, value = line.split("=")

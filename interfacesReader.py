@@ -41,7 +41,7 @@ class InterfacesReader:
             for line in interfaces:
                 # Identify the clauses by analyzing the first word of each line.
                 # Go to the next line if the current line is a comment.
-                if line.strip().startswith("#") is True:
+                if line.strip().startswith("#") is True or line == "\n" or line == "":
                     pass
                 else:
                     self._parse_iface(line)

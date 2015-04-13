@@ -1,5 +1,4 @@
 import socket
-import toolutils
 
 
 class NetworkAdapter:
@@ -35,7 +34,7 @@ class NetworkAdapter:
             return
         if not val:
             if 'required' in validations and validations['required'] is True:
-                raise ValueError("{} is a required option".format(opt))
+                raise ValueError("{0} is a required option".format(opt))
             else:
                 return
 
@@ -44,13 +43,13 @@ class NetworkAdapter:
                 try:
                     self.validateIP(val)
                 except socket.error:
-                    raise ValueError("{} should be a valid IP (got : {})".format(opt, val))
+                    raise ValueError("{0} should be a valid IP (got : {1})".format(opt, val))
             else:
                 if not isinstance(val, validations['type']):
-                    raise ValueError("{} should be {}".format(opt, str(validations['type'])))
+                    raise ValueError("{0} should be {1}".format(opt, str(validations['type'])))
         if 'in' in validations:
             if not val in validations['in']:
-                raise ValueError("{} should be in {}".format(opt, ", ".join(validations['in'])))
+                raise ValueError("{0} should be in {1}".format(opt, ", ".join(validations['in'])))
 
     def validateIP(self, ip):
         '''

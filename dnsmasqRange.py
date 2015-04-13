@@ -23,7 +23,7 @@ class DnsmasqRange(object):
 
     def set(self, key, value):
         if key == "dhcp-range":
-            if not "dhcp-range" in self._config:
+            if "dhcp-range" not in self._config:
                 self._config["dhcp-range"] = []
             if isinstance(value, str):
                 value = self._extract_range_info(value)
@@ -36,8 +36,8 @@ class DnsmasqRange(object):
             for r in self._config["dhcp-range"]:
                 required = ["interface", "start", "end", "lease_time"]
                 for k in required:
-                    if not k in r:
-                        raise ValueError("Missing option : {}".format(k))
+                    if k not in r:
+                        raise ValueError("Missing option : {0}".format(k))
                 socket.inet_aton(r["start"])
                 socket.inet_aton(r["end"])
                 if r["start"] > r["end"]:
@@ -45,9 +45,28 @@ class DnsmasqRange(object):
         except KeyError:
             pass  # dhcp-range is not mandatory
 
+    def update_range(self, new_ranges):
+        changed = False
+        dhcp_range = self.get_itf_range(new_ranges["name"])
+        if "conn_type" in new_ranges:
+            if new_ranges["conn_type"] == "ap" and new_ranges["name"] is not "eth0":
+                if dhcp_range is None:
+                    dhcp_range = {
+                        'interface': new_ranges["name"], 'lease_time': '24h',
+                        "start": "", "end": ""
+                    }
+                dhcp_range["start"] = new_ranges["range_ip_start"]
+                dhcp_range["end"] = new_ranges["range_ip_end"]
+                changed = True
+                self.set("dhcp-range", dhcp_range)
+            else:
+                self.rm_itf_range(new_ranges["name"])
+                changed = True
+        return changed
+
     def get_itf_range(self, if_name):
         ''' If no if, return None '''
-        if not "dhcp-range" in self._config:
+        if "dhcp-range" not in self._config:
             return None
         for v in self._config['dhcp-range']:
             if v["interface"] == if_name:
@@ -57,7 +76,7 @@ class DnsmasqRange(object):
         ''' Rm range info for the given if '''
 
         if "dhcp-range" in self._config:
-            self._config['dhcp-range'][:] = [x for x in self._config['dhcp-range'] if x["interface"] == if_name]
+            self._config['dhcp-range'][:] = [x for x in self._config['dhcp-range'] if x["interface"] != if_name]
 
     def set_defaults(self):
         ''' Defaults for my needs, you should probably override this one '''
@@ -77,7 +96,7 @@ class DnsmasqRange(object):
 
         with open(path, "r") as dnsmasq:
             for line in dnsmasq:
-                if line.startswith('#') is True:
+                if line.startswith('#') is True or line == "\n" or line == "":
                     continue
                 else:
                     key, value = line.split("=")
@@ -95,13 +114,14 @@ class DnsmasqRange(object):
 
         with toolutils.atomic_write(path) as dnsmasq:
             for k, v in self._config.iteritems():
+                import ipdb;ipdb.set_trace()
                 if k == "dhcp-range":
                     for r in v:
-                        dnsmasq.write("dhcp-range=interface:{},{},{},{}\n".format(
+                        dnsmasq.write("dhcp-range=interface:{0},{1},{2},{3}\n".format(
                             r["interface"], r["start"], r["end"], r["lease_time"]
                         ))
                 else:
-                    dnsmasq.write("{}={}\n".format(str(k).strip(), str(v).strip()))
+                    dnsmasq.write("{0}={1}\n".format(str(k).strip(), str(v).strip()))
 
     def controlService(self, action):
         ''' return True/False, command output '''

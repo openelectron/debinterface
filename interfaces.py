@@ -3,7 +3,6 @@ from interfacesWriter import InterfacesWriter
 from interfacesReader import InterfacesReader
 from adapter import NetworkAdapter
 import toolutils
-import defaults
 
 
 class Interfaces:
@@ -72,14 +71,14 @@ class Interfaces:
         self._adapters = [x for x in self._adapters if x._ifAttributes['name'] != name]
 
     def upAdapter(self, if_name):
-        ''' return True/False, command output. Use ifconfig. '''
+        ''' return True/False, command output. Use ifup. '''
 
-        return toolutils.safe_subprocess(["ifconfig", if_name, 'up'])
+        return toolutils.safe_subprocess(["ifup", if_name])
 
     def downAdapter(self, if_name):
         ''' return True/False, command output. Use ifdown. '''
 
-        return toolutils.safe_subprocess(["ifconfig", if_name, 'down'])
+        return toolutils.safe_subprocess(["ifdown", if_name])
 
     def _set_paths(self, interfaces_path, backup_path):
         ''' either use user input or defaults '''
