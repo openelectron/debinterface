@@ -15,6 +15,7 @@ class NetworkAdapter:
         'broadcast': {'type': 'IP'},
         'gateway': {'type': 'IP'},
         'bridge-opts': {'type': dict},
+        'dns-nameservers': {'type': 'IP'},
         'addrFam': {'in': ['inet', 'inet6', 'ipx']},
         'source': {'in': ['dhcp', 'static', 'loopback', 'manual',
                           'bootp', 'ppp', 'wvdial', 'dynamic', 'ipv4ll', 'v4tunnel']},
@@ -43,7 +44,7 @@ class NetworkAdapter:
                     raise ValueError("{0} field is required for static interface".format(req))
         elif self._ifAttributes["source"] == "dhcp":
             for req in ["address", "netmask"]:
-                if req in self._ifAttributes:
+                if req in self._ifAttributes and self._ifAttributes[req] is not None:
                     raise ValueError("{0} field is forbidden for dhcp interface".format(req))
 
     def validateOne(self, opt, validations, val):
@@ -76,6 +77,8 @@ class NetworkAdapter:
             Works for subnet masks too.
         '''
         socket.inet_aton(ip)
+        if "." not in str(ip) or ":" not in str(ip):
+            raise socket.error("I need an ip with dots or :")
 
     def setName(self, n):
         ''' Set the name option of an interface. '''
@@ -142,6 +145,10 @@ class NetworkAdapter:
         self.validateOne('hostapd', self._valid['hostapd'], h)
         self._ifAttributes['hostapd'] = h
 
+    def setDnsNameservers(self, h):
+        self.validateOne('dns-nameservers', self._valid['dns-nameservers'], h)
+        self._ifAttributes['dns-nameservers'] = h
+
     def setBropts(self, opts):
         '''
             Set or append the bridge options of an interface.
@@ -163,17 +170,23 @@ class NetworkAdapter:
             Set and add to the up commands for an interface.
             Takes a LIST of shell commands.
         '''
-        self._ifAttributes['up'] = up
+        if isinstance(up, list):
+            self._ifAttributes['up'] = up
+        else:
+            self._ifAttributes['up'] = [up]
 
     def appendUp(self, cmd):
-        self._ifAttributes['up'].append(cmd)
+        self._ensure_list(self._ifAttributes, "up", cmd)
 
     def setDown(self, down):
         '''
             Set and add to the down commands for an interface.
             Takes a LIST of shell commands.
         '''
-        self._ifAttributes['down'] = down
+        if isinstance(down, list):
+            self._ifAttributes['down'] = down
+        else:
+            self._ifAttributes['down'] = [down]
 
     def appendDown(self, cmd):
         self._ensure_list(self._ifAttributes, "down", cmd)
@@ -183,7 +196,10 @@ class NetworkAdapter:
             Set and add to the pre-up commands for an interface.
             Takes a LIST of shell commands.
         '''
-        self._ifAttributes['pre-up'] = pre
+        if isinstance(pre, list):
+            self._ifAttributes['pre'] = pre
+        else:
+            self._ifAttributes['pre'] = [pre]
 
     def appendPreUp(self, cmd):
         self._ensure_list(self._ifAttributes, "pre-up", cmd)
@@ -292,6 +308,8 @@ class NetworkAdapter:
                         self.setPostDown(options[key])
                     elif key == 'hostapd':
                         self.setHostapd(options[key])
+                    elif key == 'dns-nameservers':
+                        self.setDnsNameservers(options[key])
                     else:
                         # Store it as if
                         self.setUnknown(key, options[key])
@@ -310,3 +328,5 @@ class NetworkAdapter:
             dic[key] = [tmp]
         if type(value) == list:
             dic[key] += value
+        else:
+            dic[key].append(value)
