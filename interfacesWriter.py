@@ -13,7 +13,7 @@ class InterfacesWriter:
     _iface = Template('iface $name $addrFam $source\n')
     _cmd = Template('\t$varient $value\n')
 
-    _addressFields = ['address', 'network', 'netmask', 'broadcast', 'gateway']
+    _addressFields = ['address', 'network', 'netmask', 'broadcast', 'gateway', 'dns-nameservers']
     _prepFields = ['pre-up', 'up', 'down', 'post-down']
     _bridgeFields = ['ports', 'fd', 'hello', 'maxage', 'stp']
 
