@@ -42,9 +42,7 @@ class DnsmasqRange(object):
                 for k in required:
                     if k not in r:
                         raise ValueError("Missing option : {0}".format(k))
-                socket.inet_aton(r["start"])
-                socket.inet_aton(r["end"])
-                if r["start"] > r["end"]:
+                if socket.inet_aton(r["end"]) < socket.inet_aton(r["start"]):
                     raise ValueError("Start IP range must be before end IP")
                 return True
         except KeyError:
