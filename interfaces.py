@@ -73,12 +73,12 @@ class Interfaces:
     def upAdapter(self, if_name):
         ''' return True/False, command output. Use ifup. '''
 
-        return toolutils.safe_subprocess(["ifup", if_name])
+        return toolutils.safe_subprocess(["/sbin/ifup", if_name])
 
     def downAdapter(self, if_name):
         ''' return True/False, command output. Use ifdown. '''
 
-        return toolutils.safe_subprocess(["ifdown", if_name])
+        return toolutils.safe_subprocess(["/sbin/ifdown", if_name])
 
     def _set_paths(self, interfaces_path, backup_path):
         ''' either use user input or defaults '''
