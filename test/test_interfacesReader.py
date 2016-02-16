@@ -1,25 +1,29 @@
 # -*- coding: utf-8 -*-
+import os
 import unittest
-import tempfile
-import shutil
-from interfacesReader import InterfacesReader
+from ..interfacesReader import InterfacesReader
 
+
+INF_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "interfaces")
 
 class TestInterfacesReader(unittest.TestCase):
     def test_parse_interfaces_count(self):
         """Should have 8 adapters"""
 
         nb_adapters = 8
-        with tempfile.NamedTemporaryFile() as source:
-            shutil.copy("./test/interfaces", source.name)
-            reader = InterfacesReader(source.name)
-            adapters = reader.parse_interfaces()
-            self.assertEqual(len(adapters), nb_adapters)
+        reader = InterfacesReader(INF_PATH)
+        adapters = reader.parse_interfaces()
+        self.assertEqual(len(adapters), nb_adapters)
 
     def test_parse_interfaces(self):
         """All adapters should validate"""
-        with tempfile.NamedTemporaryFile() as source:
-            shutil.copy("./test/interfaces", source.name)
-            reader = InterfacesReader(source.name)
-            for adapter in reader.parse_interfaces():
-                adapter.validateAll()
+        reader = InterfacesReader(INF_PATH)
+        for adapter in reader.parse_interfaces():
+            adapter.validateAll()
+
+    def test_dnsnameservers_not_unknown(self):
+        """All adapters should validate"""
+        reader = InterfacesReader(INF_PATH)
+        eth1 = next((x for x in reader.parse_interfaces() if x._ifAttributes['name'] == "eth1"), None)
+        self.assertNotEqual(eth1, None)
+        self.assertEqual(eth1._ifAttributes["dns-nameservers"], "8.8.8.8")

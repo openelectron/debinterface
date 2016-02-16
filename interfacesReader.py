@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # A class representing the contents of /etc/network/interfaces
 
 from adapter import NetworkAdapter
@@ -66,6 +67,7 @@ class InterfacesReader:
     def _parse_details(self, line):
         if line[0].isspace() is True:
             sline = [x.strip() for x in line.split()]
+
             if sline[0] == 'address':
                 self._adapters[self._context].setAddress(sline[1])
             elif sline[0] == 'netmask':
@@ -76,6 +78,10 @@ class InterfacesReader:
                 self._adapters[self._context].setBroadcast(sline[1])
             elif sline[0] == 'network':
                 self._adapters[self._context].setNetwork(sline[1])
+            elif sline[0] == 'hostapd':
+                self._adapters[self._context].setHostapd(sline[1])
+            elif sline[0] == 'dns-nameservers':
+                self._adapters[self._context].setDnsNameservers(sline[1])
             elif sline[0].startswith('bridge') is True:
                 opt = sline[0].split('_')
                 sline.pop(0)

@@ -1,8 +1,18 @@
 # -*- coding: utf-8 -*-
+import copy
 import os
 import shutil
 import socket
 import toolutils
+
+
+DEFAULT_CONFIG = {
+    'dhcp-range': [
+        {'interface': 'wlan0', 'start': '10.1.10.11', 'end': '10.1.10.250', 'lease_time': '24h'},
+        {'interface': 'eth1', 'start': '10.1.20.10', 'end': '10.1.20.250', 'lease_time': '24h'}
+    ],
+    'dhcp-leasefile': '/var/tmp/dnsmasq.leases'
+}
 
 
 class DnsmasqRange(object):
@@ -12,13 +22,14 @@ class DnsmasqRange(object):
         Made for handling very basic dhcp-range options
     '''
 
-    def __init__(self, path, backup_path=None):
+    def __init__(self, path, backup_path=None, leases_path='/var/tmp/dnsmasq.leases'):
         self._config = {}
         self._path = path
         if not backup_path:
             self.backup_path = path + ".bak"
         else:
             self.backup_path = backup_path
+        self._leases_path = leases_path
 
     @property
     def config(self):
@@ -31,7 +42,15 @@ class DnsmasqRange(object):
             if isinstance(value, str):
                 value = self._extract_range_info(value)
             if value:
-                self._config["dhcp-range"].append(value)
+                if self.get_itf_range(value["interface"]):
+                    self.update_range(
+                        interface=value["interface"],
+                        start=value["start"],
+                        end=value["end"],
+                        lease_time=value["lease_time"]
+                    )
+                else:
+                    self._config["dhcp-range"].append(value)
         else:
             self._config[str(key).strip()] = value
 
@@ -45,30 +64,36 @@ class DnsmasqRange(object):
                 if socket.inet_aton(r["end"]) < socket.inet_aton(r["start"]):
                     raise ValueError("Start IP range must be before end IP")
                 return True
+            itf_names = [data["interface"] for data in self._config["dhcp-range"]]
+            if len(itf_names) != set(itf_names):
+                raise ValueError("Multiple interfaces with the same name")
         except KeyError:
             pass  # dhcp-range is not mandatory
 
-    def update_range(self, new_ranges):
-        changed = False
-        dhcp_range = self.get_itf_range(new_ranges["name"])
-        if "conn_type" in new_ranges:
-            if new_ranges["conn_type"] == "ap" and new_ranges["name"] is not "eth0":
-                if dhcp_range is None:
-                    dhcp_range = {
-                        'interface': new_ranges["name"], 'lease_time': '24h',
-                        "start": "10.1.10.11", "end": "10.1.10.250"  # better than nothing
-                    }
-                dhcp_range["start"] = new_ranges["range_ip_start"]
-                dhcp_range["end"] = new_ranges["range_ip_end"]
-                changed = True
-                self.set("dhcp-range", dhcp_range)
-            else:
-                self.rm_itf_range(new_ranges["name"])
-                changed = True
-        return changed
+    def update_range(self, interface, start, end, lease_time):
+        """Update existing range based on the interface name
+        If does not exist will be created
+            Args:
+                interface (string): interface name
+                start (string) : start ip of range
+                end (string) : end ip of range
+                lease_time (string) : lease_time
+            Returns:
+                boolean : True if configuration was updated or created, False otherwise
+        """
+        current_range = self.get_itf_range(interface)
+        new_range = {
+            'interface': interface, 'lease_time': lease_time,
+            "start": start, "end": end
+        }
+        if current_range and (current_range == new_range):
+            return False
+        self.rm_itf_range(interface)
+        self.set("dhcp-range", new_range)
+        return True
 
     def get_itf_range(self, if_name):
-        ''' If no if, return None '''
+        ''' If no interface, return None '''
         if "dhcp-range" not in self._config:
             return None
         for v in self._config['dhcp-range']:
@@ -83,13 +108,7 @@ class DnsmasqRange(object):
 
     def set_defaults(self):
         ''' Defaults for my needs, you should probably override this one '''
-        self._config = {
-            'dhcp-range': [
-                {'interface': 'wlan0', 'start': '10.1.10.11', 'end': '10.1.10.250', 'lease_time': '24h'},
-                {'interface': 'eth1', 'start': '10.1.20.10', 'end': '10.1.20.250', 'lease_time': '24h'}
-            ],
-            'dhcp-leasefile': '/var/tmp/dnsmasq.leases'
-        }
+        self._config = copy.deepcopy(DEFAULT_CONFIG)
 
     def read(self, path=None):
         if path is None:
@@ -134,6 +153,13 @@ class DnsmasqRange(object):
             return False, "Invalid action"
         return toolutils.safe_subprocess(["/etc/init.d/dnsmasq", action])
 
+    def clear_leases(self):
+        """rm /var/tmp/dnsmasq.leases"""
+        try:
+            os.remove(self._leases_path)
+        except Exception:
+            pass
+
     def backup(self):
         ''' return True/False, command output '''
 
@@ -163,3 +189,10 @@ class DnsmasqRange(object):
         except:
             pass
         return ret
+
+    def apply_changes(self):
+        """Write changes to fs and restart daemon"""
+        self.controlService("stop")
+        self.write()
+        self.clear_leases()
+        self.controlService("start")

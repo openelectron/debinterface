@@ -16,6 +16,7 @@ class InterfacesWriter:
     _addressFields = ['address', 'network', 'netmask', 'broadcast', 'gateway', 'dns-nameservers']
     _prepFields = ['pre-up', 'up', 'down', 'post-down']
     _bridgeFields = ['ports', 'fd', 'hello', 'maxage', 'stp']
+    _plugins = ["hostapd"]
 
     def __init__(self, adapters, interfaces_path, backup_path=None):
         ''' if backup_path is None => no backup '''
@@ -61,6 +62,7 @@ class InterfacesWriter:
         self._write_addrFam(interfaces, adapter, ifAttributes)
         self._write_addressing(interfaces, adapter, ifAttributes)
         self._write_bridge(interfaces, adapter, ifAttributes)
+        self._write_plugins(interfaces, adapter, ifAttributes)
         self._write_callbacks(interfaces, adapter, ifAttributes)
         self._write_unknown(interfaces, adapter, ifAttributes)
         interfaces.write("\n")
@@ -90,6 +92,8 @@ class InterfacesWriter:
         # Write the source clause.
         # Will not error if omitted. Maybe not the best plan.
         try:
+            if not ifAttributes["name"] or not ifAttributes["addrFam"] or not ifAttributes["source"]:
+                raise ValueError("Invalid field content")
             d = dict(name=ifAttributes['name'], addrFam=ifAttributes['addrFam'], source=ifAttributes['source'])
             interfaces.write(self._iface.substitute(d))
         except KeyError:
@@ -98,7 +102,8 @@ class InterfacesWriter:
     def _write_addressing(self, interfaces, adapter, ifAttributes):
         for field in self._addressFields:
             try:
-                if ifAttributes[field] and ifAttributes[field] != 'None':
+                value = ifAttributes[field]
+                if value and value != 'None':
                     d = dict(varient=field, value=ifAttributes[field])
                     interfaces.write(self._cmd.substitute(d))
             # Keep going if a field isn't provided.
@@ -109,8 +114,10 @@ class InterfacesWriter:
         ''' Write the bridge information. '''
         for field in self._bridgeFields:
             try:
-                d = dict(varient="bridge_" + field, value=ifAttributes['bridge-opts'][field])
-                interfaces.write(self._cmd.substitute(d))
+                value = ifAttributes['bridge-opts'][field]
+                if value and value != 'None':
+                    d = dict(varient="bridge_" + field, value=value)
+                    interfaces.write(self._cmd.substitute(d))
             # Keep going if a field isn't provided.
             except KeyError:
                 pass
@@ -118,20 +125,33 @@ class InterfacesWriter:
     def _write_callbacks(self, interfaces, adapter, ifAttributes):
         ''' Write the up, down, pre-up, and post-down clauses. '''
         for field in self._prepFields:
-            for item in ifAttributes[field]:
-                try:
-                    d = dict(varient=field, value=item)
-                    interfaces.write(self._cmd.substitute(d))
+            try:
+                for item in ifAttributes[field]:
+                    if item and item != 'None':
+                        d = dict(varient=field, value=item)
+                        interfaces.write(self._cmd.substitute(d))
+            except KeyError:
                 # Keep going if a field isn't provided.
-                except KeyError:
-                    pass
+                pass
+
+    def _write_plugins(self, interfaces, adapter, ifAttributes):
+        ''' Write plugins options, currently hostapd. '''
+        for field in self._plugins:
+            try:
+                if field in ifAttributes and ifAttributes[field] != 'None':
+                    d = dict(varient=field, value=ifAttributes[field])
+                    interfaces.write(self._cmd.substitute(d))
+            # Keep going if a field isn't provided.
+            except KeyError:
+                pass
 
     def _write_unknown(self, interfaces, adapter, ifAttributes):
         ''' Write unknowns options '''
         try:
             for k, v in ifAttributes['unknown'].iteritems():
-                d = dict(varient=k, value=str(v))
-                interfaces.write(self._cmd.substitute(d))
+                if v:
+                    d = dict(varient=k, value=str(v))
+                    interfaces.write(self._cmd.substitute(d))
         except (KeyError, ValueError):
             pass
 

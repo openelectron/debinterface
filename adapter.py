@@ -28,6 +28,9 @@ class NetworkAdapter:
 
     }
 
+    def get_attr(self, attr):
+        return self._ifAttributes[attr]
+
     def validateAll(self):
         ''' Not thorough validations... and quick coded. Raise ValueError '''
 
@@ -77,7 +80,7 @@ class NetworkAdapter:
             Works for subnet masks too.
         '''
         socket.inet_aton(ip)
-        if "." not in str(ip) or ":" not in str(ip):
+        if "." not in str(ip):
             raise socket.error("I need an ip with dots or :")
 
     def setName(self, n):
