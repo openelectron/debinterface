@@ -312,7 +312,7 @@ class NetworkAdapter:
                 for key in options.keys():
                     if key == 'name':
                         self.setName(options[key])
-                    if key == 'addrFam':
+                    elif key == 'addrFam':
                         self.setAddrFam(options[key])
                     elif key == 'source':
                         self.setAddressSource(options[key])
