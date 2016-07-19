@@ -1,0 +1,30 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](http://semver.org/).
+From http://keepachangelog.com
+
+## [Unreleased][unreleased]
+### Added
+### Changed
+### Fixed
+### Removed
+
+
+## 2.1 - 2016-07-10
+### Added
+- a changelog...
+
+### Changed
+- toolutils : safe_subprocess : enforce shell command being an array
+- interfacesWriter : uses 'ifup -a --no-act' to check the interfaces file just written.
+
+
+## 2.0-beta - 2014-09-01
+### Changed
+- refactoring which breaks retrocompatibility
+
+
+## 1.0 - 2012-12-15
+### Added
+- Read, writing, and editing supported.
+- Specify file locations in constants.py

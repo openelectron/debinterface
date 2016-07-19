@@ -3,14 +3,6 @@
 This is a simple Python library for dealing with the /etc/network/interfaces file in most Debian based distributions.
 This is forked from https://github.com/dggreenbaum/debinterface to refactor it and maybe extends it with wpa_supplicant handling
 
-## Changelog:
-2.0-beta - September 2014 : refactoring which breaks retrocompatibility
-1.0 - Dec 15 2012
-
-	Read, writing, and editing supported.
-
-	Specify file locations in constants.py
-
 
 ## Example usage:
 
