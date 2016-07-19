@@ -43,10 +43,35 @@ class InterfacesWriter:
                 for adapter in self._adapters:
                     # Get dict of details about the adapter.
                     self._write_adapter(interfaces, adapter)
-        except:
+            self._check_interfaces(self._interfaces_path)
+        except Exception as ex:
             # Any error, let's roll back
             self._restore_interfaces()
             raise
+
+
+    def _check_interfaces(self, interfaces_path):
+        """Uses ifup to check interfaces file. If it is not in the default place,
+        each interface must be checked one by one.
+            Args:
+                interfaces_path (string) : the path to interfaces file
+
+            Raises:
+                ValueError : if invalid network interfaces
+        """
+        if interfaces_path == "/etc/network/interfaces":
+            ret, output = toolutils.safe_subprocess(["ifup", "-a", "--no-act"])
+        else:
+            for adapter in self._adapters:
+                ret, output = toolutils.safe_subprocess([
+                    "ifup", "-a", "--no-act",
+                    "interfaces={}".format(interfaces_path),
+                    adapter["name"]
+                ])
+                if not ret:
+                    break
+        if not ret:
+            raise ValueError("Invalid network interfaces file written to disk, restoring to previous one : {}".format(output))
 
     def _write_adapter(self, interfaces, adapter):
         try:
