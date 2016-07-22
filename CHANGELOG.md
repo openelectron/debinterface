@@ -9,6 +9,11 @@ From http://keepachangelog.com
 ### Fixed
 ### Removed
 
+## 2.2 - 2016-07-22
+### Changed
+- InterfacesWritter : uses ifup --no-act to check for /etc/network/interfaces validity
+- adapter : it is possible to access its properties
+
 
 ## 2.1 - 2016-07-10
 ### Added
