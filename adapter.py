@@ -28,6 +28,10 @@ class NetworkAdapter:
 
     }
 
+    @property
+    def attributes(self):
+        return self._ifAttributes
+
     def get_attr(self, attr):
         return self._ifAttributes[attr]
 
