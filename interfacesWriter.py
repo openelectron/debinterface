@@ -64,9 +64,9 @@ class InterfacesWriter:
         else:
             for adapter in self._adapters:
                 ret, output = toolutils.safe_subprocess([
-                    "ifup", "-a", "--no-act",
+                    "ifup", "--no-act",
                     "interfaces={}".format(interfaces_path),
-                    adapter["name"]
+                    adapter.attributes["name"]
                 ])
                 if not ret:
                     break
