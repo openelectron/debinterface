@@ -2,7 +2,7 @@
 import unittest
 import filecmp
 import tempfile
-from ..hostapd import Hostapd
+from debinterface.hostapd import Hostapd
 
 
 DEFAULT_CONTENT = '''

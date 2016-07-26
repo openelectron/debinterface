@@ -2,3 +2,9 @@
 *~
 *.conf
 *.bak
+
+# packaging
+.eggs/
+build/
+debinterface.egg-info/
+dist/
