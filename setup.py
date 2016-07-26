@@ -6,12 +6,6 @@ from setuptools import setup, find_packages
 REQUIREMENTS = [
 ]
 
-DEP = [
-]
-
-TEST_REQUIREMENTS = [
-]
-
 pyxed = []
 pack = find_packages(exclude=["test"])
 
@@ -22,9 +16,6 @@ setup(
     ext_modules=pyxed,
     packages=pack,
     install_requires=REQUIREMENTS,
-    dependency_links=DEP,
-    # tests
     test_suite="test",
-    tests_require=TEST_REQUIREMENTS,
 )
 
