@@ -4,7 +4,7 @@ import socket
 import copy
 import filecmp
 import tempfile
-from ..dnsmasqRange import DnsmasqRange, DEFAULT_CONFIG
+from debinterface.dnsmasqRange import DnsmasqRange, DEFAULT_CONFIG
 
 
 DEFAULT_CONTENT = '''
