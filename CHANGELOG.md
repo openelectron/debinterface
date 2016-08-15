@@ -9,9 +9,12 @@ From http://keepachangelog.com
 ### Fixed
 ### Removed
 
-## 2.3.1 - 2016-08-15
+## [Unreleased][unreleased]
 ### Changed
 - Makes flake8 happy
+
+### Fixed
+- compatibility with python 2.6
 
 
 ## 2.3 - 2016-08-07
