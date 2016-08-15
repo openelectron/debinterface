@@ -9,6 +9,11 @@ From http://keepachangelog.com
 ### Fixed
 ### Removed
 
+## 2.3.1 - 2016-08-15
+### Changed
+- Makes flake8 happy
+
+
 ## 2.3 - 2016-08-07
 ### Changed
 - Code is ready to be deployed to PyPi

@@ -8,21 +8,32 @@ import toolutils
 
 DEFAULT_CONFIG = {
     'dhcp-range': [
-        {'interface': 'wlan0', 'start': '10.1.10.11', 'end': '10.1.10.250', 'lease_time': '24h'},
-        {'interface': 'eth1', 'start': '10.1.20.10', 'end': '10.1.20.250', 'lease_time': '24h'}
+        {
+            'interface': 'wlan0',
+            'start': '10.1.10.11',
+            'end': '10.1.10.250',
+            'lease_time': '24h'
+        },
+        {
+            'interface': 'eth1',
+            'start': '10.1.20.10',
+            'end': '10.1.20.250',
+            'lease_time': '24h'
+        }
     ],
     'dhcp-leasefile': '/var/tmp/dnsmasq.leases'
 }
 
 
 class DnsmasqRange(object):
-    '''
+    """
         Basic dnsmasq conf of the more file which holds the ip ranges
         per interface.
         Made for handling very basic dhcp-range options
-    '''
+    """
 
-    def __init__(self, path, backup_path=None, leases_path='/var/tmp/dnsmasq.leases'):
+    def __init__(self, path, backup_path=None,
+                 leases_path='/var/tmp/dnsmasq.leases'):
         self._config = {}
         self._path = path
         if not backup_path:
@@ -64,7 +75,10 @@ class DnsmasqRange(object):
                 if socket.inet_aton(r["end"]) < socket.inet_aton(r["start"]):
                     raise ValueError("Start IP range must be before end IP")
                 return True
-            itf_names = [data["interface"] for data in self._config["dhcp-range"]]
+            itf_names = [
+                data["interface"]
+                for data in self._config["dhcp-range"]
+            ]
             if len(itf_names) != set(itf_names):
                 raise ValueError("Multiple interfaces with the same name")
         except KeyError:
@@ -79,7 +93,8 @@ class DnsmasqRange(object):
                 end (string) : end ip of range
                 lease_time (string) : lease_time
             Returns:
-                boolean : True if configuration was updated or created, False otherwise
+                boolean : True if configuration was updated or created,
+                            False otherwise
         """
         current_range = self.get_itf_range(interface)
         new_range = {
@@ -93,7 +108,7 @@ class DnsmasqRange(object):
         return True
 
     def get_itf_range(self, if_name):
-        ''' If no interface, return None '''
+        """ If no interface, return None """
         if "dhcp-range" not in self._config:
             return None
         for v in self._config['dhcp-range']:
@@ -101,13 +116,16 @@ class DnsmasqRange(object):
                 return v
 
     def rm_itf_range(self, if_name):
-        ''' Rm range info for the given if '''
+        """ Rm range info for the given if """
 
         if "dhcp-range" in self._config:
-            self._config['dhcp-range'][:] = [x for x in self._config['dhcp-range'] if x["interface"] != if_name]
+            self._config['dhcp-range'][:] = [
+                x for x in self._config['dhcp-range']
+                if x["interface"] != if_name
+            ]
 
     def set_defaults(self):
-        ''' Defaults for my needs, you should probably override this one '''
+        """ Defaults for my needs, you should probably override this one """
         self._config = copy.deepcopy(DEFAULT_CONFIG)
 
     def read(self, path=None):
@@ -140,14 +158,18 @@ class DnsmasqRange(object):
                     if not v:
                         continue
                     for r in v:
-                        dnsmasq.write("dhcp-range=interface:{0},{1},{2},{3}\n".format(
-                            r["interface"], r["start"], r["end"], r["lease_time"]
-                        ))
+                        line = "dhcp-range=interface:{0},{1},{2},{3}\n".format(
+                            r["interface"], r["start"],
+                            r["end"], r["lease_time"]
+                        )
+                        dnsmasq.write(line)
                 else:
-                    dnsmasq.write("{0}={1}\n".format(str(k).strip(), str(v).strip()))
+                    key = str(k).strip()
+                    value = str(v).strip()
+                    dnsmasq.write("{0}={1}\n".format(key, value))
 
     def controlService(self, action):
-        ''' return True/False, command output '''
+        """ return True/False, command output """
 
         if action not in ["start", "stop", "restart"]:
             return False, "Invalid action"
@@ -161,19 +183,19 @@ class DnsmasqRange(object):
             pass
 
     def backup(self):
-        ''' return True/False, command output '''
+        """ return True/False, command output """
 
         if self.backup_path:
             shutil.copy(self._path, self.backup_path)
 
     def restore(self):
-        ''' return True/False, command output '''
+        """ return True/False, command output """
 
         if self.backup_path:
             shutil.copy(self.backup_path, self._path)
 
     def delete(self):
-        ''' return True/False, command output '''
+        """ return True/False, command output """
 
         if self.backup_path:
             os.remove(self._path)

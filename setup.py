@@ -25,7 +25,9 @@ URL = 'https://github.com/nMustaki/debinterface'
 setup(
     name="debinterface",
     version=VERSION,
-    description="A simple Python library for dealing with the /etc/network/interfaces file in most Debian based distributions.",
+    description=("A simple Python library for dealing with "
+                 "the /etc/network/interfaces file in most "
+                 "Debian based distributions."),
     long_description=read("README.rst"),
     license="BSD",
     maintainer='Nathan Mustaki',
