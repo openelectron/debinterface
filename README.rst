@@ -2,7 +2,7 @@
 Debinterface
 ============
 
-.. image:: https://travis-ci.org/nMustaki/debinterface.svg?branch=devel
+.. image:: https://travis-ci.org/nMustaki/debinterface.svg?branch=master
     :target: https://travis-ci.org/nMustaki/debinterface
 
 
