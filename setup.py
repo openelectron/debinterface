@@ -18,7 +18,7 @@ def read(*parts):
 
 REQUIREMENTS = []
 
-VERSION = "2.3.0"
+VERSION = "3.0.0"
 URL = 'https://github.com/nMustaki/debinterface'
 
 
@@ -51,7 +51,6 @@ setup(
         'Natural Language :: English',
         'Topic :: System :: Systems Administration',
         'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
