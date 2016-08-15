@@ -68,7 +68,7 @@ class InterfacesWriter:
             for adapter in self._adapters:
                 ret, output = toolutils.safe_subprocess([
                     "ifup", "--no-act",
-                    "interfaces={}".format(interfaces_path),
+                    "interfaces={0}".format(interfaces_path),
                     adapter.attributes["name"]
                 ])
                 if not ret:
@@ -76,7 +76,7 @@ class InterfacesWriter:
         if not ret:
             raise ValueError("Invalid network interfaces file "
                              "written to disk, restoring to previous "
-                             "one : {}".format(output))
+                             "one : {0}".format(output))
 
     def _write_adapter(self, interfaces, adapter):
         try:

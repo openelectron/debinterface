@@ -41,7 +41,7 @@ setup(
         'dev': ['check-manifest', 'twine']
     },
     test_suite="test",
-    download_url='{}/archive/v{}.zip'.format(URL, VERSION),
+    download_url='{0}/archive/v{1}.zip'.format(URL, VERSION),
     keywords=['debian', 'network', 'system', 'configuration'],
     classifiers=(
         'Development Status :: 5 - Production/Stable',
