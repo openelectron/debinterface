@@ -8,3 +8,4 @@
 build/
 debinterface.egg-info/
 dist/
+.tox
