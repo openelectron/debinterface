@@ -2,6 +2,7 @@
 # help confirm pull requests to this project.
 
 language: python
+cache: pip
 
 env:
   - TOXENV=py27
