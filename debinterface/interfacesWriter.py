@@ -77,7 +77,7 @@ class InterfacesWriter:
         try:
             adapter.validateAll()
         except ValueError as e:
-            print(e.message)
+            print(repr(e))
             raise
 
         ifAttributes = adapter.export()
