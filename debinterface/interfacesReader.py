@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # A class representing the contents of /etc/network/interfaces
 
-from adapter import NetworkAdapter
+from debinterface.adapter import NetworkAdapter
 
 
 class InterfacesReader:

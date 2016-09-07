@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import shutil
-import toolutils
+
+import debinterface.toolutils as toolutils
 
 
 class Hostapd(object):

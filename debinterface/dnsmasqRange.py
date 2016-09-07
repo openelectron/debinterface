@@ -3,7 +3,8 @@ import copy
 import os
 import shutil
 import socket
-import toolutils
+
+import debinterface.toolutils as toolutils
 
 
 DEFAULT_CONFIG = {
