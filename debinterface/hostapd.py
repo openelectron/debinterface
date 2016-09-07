@@ -132,7 +132,7 @@ class Hostapd(object):
         self.backup()
 
         with toolutils.atomic_write(path) as hostapd:
-            for k, v in self._config.iteritems():
+            for k, v in self._config.items():
                 hostapd.write("{0}={1}\n".format(str(k).strip(), str(v).strip()))
 
     def controlService(self, action):

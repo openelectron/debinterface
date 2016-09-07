@@ -135,7 +135,7 @@ class DnsmasqRange(object):
         self.backup()
 
         with toolutils.atomic_write(path) as dnsmasq:
-            for k, v in self._config.iteritems():
+            for k, v in self._config.items():
                 if k == "dhcp-range":
                     if not v:
                         continue

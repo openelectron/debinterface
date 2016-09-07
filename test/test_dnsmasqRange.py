@@ -106,7 +106,7 @@ class TestDnsmasqRange(unittest.TestCase):
             "start": "118.118.10.50", "end": "118.118.10.230"
         }
         self.assertEqual(set(expected.keys()), set(info.keys()))
-        for expected_key, expected_value in expected.iteritems():
+        for expected_key, expected_value in expected.items():
             self.assertEqual(expected_value, info[expected_key])
 
     def test_update_range(self):
@@ -126,5 +126,5 @@ class TestDnsmasqRange(unittest.TestCase):
         )
         cur_range = dns.get_itf_range("wlan0")
         self.assertEqual(set(expected.keys()), set(cur_range.keys()))
-        for expected_key, expected_value in expected.iteritems():
+        for expected_key, expected_value in expected.items():
             self.assertEqual(expected_value, cur_range[expected_key])
