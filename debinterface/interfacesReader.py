@@ -5,7 +5,7 @@ from debinterface.adapter import NetworkAdapter
 
 
 class InterfacesReader:
-    ''' Short lived class to read interfaces file '''
+    """ Short lived class to read interfaces file """
 
     def __init__(self, interfaces_path):
         self._interfaces_path = interfaces_path
@@ -16,10 +16,10 @@ class InterfacesReader:
         return self._adapters
 
     def parse_interfaces(self):
-        ''' Read /etc/network/interfaces (or specified file).
+        """ Read /etc/network/interfaces (or specified file).
             Save adapters
             Return an array of networkAdapter instances.
-        '''
+        """
         self._reset()
         self._read_lines()
 
@@ -40,8 +40,9 @@ class InterfacesReader:
         with open(self._interfaces_path, "r") as interfaces:
             # Loop through the interfaces file.
             for line in interfaces:
-                # Identify the clauses by analyzing the first word of each line.
-                # Go to the next line if the current line is a comment.
+                # 1. Identify the clauses by analyzing the first
+                # word of each line.
+                # 2. Go to the next line if the current line is a comment.
                 # line = line.strip().replace("\n", "")
                 if not line or line.strip().startswith("#") is True:
                     pass
@@ -87,7 +88,10 @@ class InterfacesReader:
                 sline.pop(0)
                 ifs = " ".join(sline)
                 self._adapters[self._context].replaceBropt(opt[1], ifs)
-            elif sline[0] == 'up' or sline[0] == 'down' or sline[0] == 'pre-up' or sline[0] == 'post-down':
+            elif (sline[0] == 'up'
+                  or sline[0] == 'down'
+                  or sline[0] == 'pre-up'
+                  or sline[0] == 'post-down'):
                 ud = sline.pop(0)
                 cmd = ' '.join(sline)
                 if ud == 'up':
@@ -103,7 +107,7 @@ class InterfacesReader:
                 self._adapters[self._context].setUnknown(sline[0], sline[1])
 
     def _read_auto(self, line):
-        ''' Identify which adapters are flagged auto. '''
+        """ Identify which adapters are flagged auto. """
         if line.startswith('auto'):
             sline = [x.strip() for x in line.split()]
             for word in sline:
@@ -113,7 +117,7 @@ class InterfacesReader:
                     self._auto_list.append(word)
 
     def _read_hotplug(self, line):
-        ''' Identify which adapters are flagged allow-hotplug. '''
+        """ Identify which adapters are flagged allow-hotplug. """
         if line.startswith('allow-hotplug'):
             sline = [x.strip() for x in line.split()]
             for word in sline:
@@ -126,7 +130,8 @@ class InterfacesReader:
         # Initialize a place to store created networkAdapter objects.
         self._adapters = []
 
-        # Keep a list of adapters that have the auto or allow-hotplug flags set.
+        # Keep a list of adapters that have the auto or
+        # allow-hotplug flags set.
         self._auto_list = []
         self._hotplug_list = []
 

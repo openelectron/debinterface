@@ -9,6 +9,17 @@ From http://keepachangelog.com
 ### Fixed
 ### Removed
 
+## 3.0 - 2016-08-15
+### Changed
+- Makes flake8 happy
+- REMOVED compatibility with python 2.6
+
+
+## 2.3 - 2016-08-07
+### Changed
+- Code is ready to be deployed to PyPi
+
+
 ## 2.2 - 2016-07-22
 ### Changed
 - InterfacesWritter : uses ifup --no-act to check for /etc/network/interfaces validity

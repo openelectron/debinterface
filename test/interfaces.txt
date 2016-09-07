@@ -14,7 +14,7 @@ iface wlan0 inet static
 #   up ( iw dev wlan0 interface add wlan1 type station && ifconfig wlan1 hw ether 92:a4:de:bd:a3:dc && ifup wlan1) || true
 #        up nat.sh wlan0 wlan1 "10.1.10.0/24"
 #        down ( ifdown wlan1 && iw wlan1 del ) || true
-#        up nat.sh wlan0 eth0 "10.1.10.0/24"
+         up nat.sh wlan0 eth0 "10.1.10.0/24"
 
 #auto wlan1
 iface wlan1 inet dhcp

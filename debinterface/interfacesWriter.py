@@ -5,7 +5,7 @@ import toolutils
 
 
 class InterfacesWriter:
-    ''' Short lived class to write interfaces file '''
+    """ Short lived class to write interfaces file """
 
     # Define templetes for blocks used in /etc/network/interfaces.
     _auto = Template('auto $name\n')
@@ -13,13 +13,16 @@ class InterfacesWriter:
     _iface = Template('iface $name $addrFam $source\n')
     _cmd = Template('\t$varient $value\n')
 
-    _addressFields = ['address', 'network', 'netmask', 'broadcast', 'gateway', 'dns-nameservers']
+    _addressFields = [
+        'address', 'network', 'netmask', 'broadcast',
+        'gateway', 'dns-nameservers'
+    ]
     _prepFields = ['pre-up', 'up', 'down', 'post-down']
     _bridgeFields = ['ports', 'fd', 'hello', 'maxage', 'stp']
     _plugins = ["hostapd"]
 
     def __init__(self, adapters, interfaces_path, backup_path=None):
-        ''' if backup_path is None => no backup '''
+        """ if backup_path is None => no backup """
         self._adapters = adapters
         self._interfaces_path = interfaces_path
         self._backup_path = backup_path
@@ -39,20 +42,20 @@ class InterfacesWriter:
         try:
             # Prepare to write the new interfaces file.
             with toolutils.atomic_write(self._interfaces_path) as interfaces:
-                # Loop through the provided networkAdaprers and write the new file.
+                # Loop through the provided networkAdaprers and
+                # write the new file.
                 for adapter in self._adapters:
                     # Get dict of details about the adapter.
                     self._write_adapter(interfaces, adapter)
             self._check_interfaces(self._interfaces_path)
-        except Exception as ex:
+        except Exception:
             # Any error, let's roll back
             self._restore_interfaces()
             raise
 
-
     def _check_interfaces(self, interfaces_path):
-        """Uses ifup to check interfaces file. If it is not in the default place,
-        each interface must be checked one by one.
+        """Uses ifup to check interfaces file. If it is not in the
+        default place, each interface must be checked one by one.
             Args:
                 interfaces_path (string) : the path to interfaces file
 
@@ -65,13 +68,15 @@ class InterfacesWriter:
             for adapter in self._adapters:
                 ret, output = toolutils.safe_subprocess([
                     "ifup", "--no-act",
-                    "interfaces={}".format(interfaces_path),
+                    "interfaces={0}".format(interfaces_path),
                     adapter.attributes["name"]
                 ])
                 if not ret:
                     break
         if not ret:
-            raise ValueError("Invalid network interfaces file written to disk, restoring to previous one : {}".format(output))
+            raise ValueError("Invalid network interfaces file "
+                             "written to disk, restoring to previous "
+                             "one : {0}".format(output))
 
     def _write_adapter(self, interfaces, adapter):
         try:
@@ -93,7 +98,7 @@ class InterfacesWriter:
         interfaces.write("\n")
 
     def _write_auto(self, interfaces, adapter, ifAttributes):
-        ''' Write if applicable '''
+        """ Write if applicable """
         try:
             if adapter._ifAttributes['auto'] is True:
                 d = dict(name=ifAttributes['name'])
@@ -102,7 +107,7 @@ class InterfacesWriter:
             pass
 
     def _write_hotplug(self, interfaces, adapter, ifAttributes):
-        ''' Write if applicable '''
+        """ Write if applicable """
         try:
             if ifAttributes['hotplug'] is True:
                 d = dict(name=ifAttributes['name'])
@@ -111,15 +116,19 @@ class InterfacesWriter:
             pass
 
     def _write_addrFam(self, interfaces, adapter, ifAttributes):
-        ''' Construct and write the iface declaration.
+        """ Construct and write the iface declaration.
             The addrFam clause needs a little more processing.
-        '''
+        """
         # Write the source clause.
         # Will not error if omitted. Maybe not the best plan.
         try:
-            if not ifAttributes["name"] or not ifAttributes["addrFam"] or not ifAttributes["source"]:
+            if (not ifAttributes["name"]
+                    or not ifAttributes["addrFam"]
+                    or not ifAttributes["source"]):
                 raise ValueError("Invalid field content")
-            d = dict(name=ifAttributes['name'], addrFam=ifAttributes['addrFam'], source=ifAttributes['source'])
+            d = dict(name=ifAttributes['name'],
+                     addrFam=ifAttributes['addrFam'],
+                     source=ifAttributes['source'])
             interfaces.write(self._iface.substitute(d))
         except KeyError:
             pass
@@ -136,7 +145,7 @@ class InterfacesWriter:
                 pass
 
     def _write_bridge(self, interfaces, adapter, ifAttributes):
-        ''' Write the bridge information. '''
+        """ Write the bridge information. """
         for field in self._bridgeFields:
             try:
                 value = ifAttributes['bridge-opts'][field]
@@ -148,7 +157,7 @@ class InterfacesWriter:
                 pass
 
     def _write_callbacks(self, interfaces, adapter, ifAttributes):
-        ''' Write the up, down, pre-up, and post-down clauses. '''
+        """ Write the up, down, pre-up, and post-down clauses. """
         for field in self._prepFields:
             try:
                 for item in ifAttributes[field]:
@@ -160,7 +169,7 @@ class InterfacesWriter:
                 pass
 
     def _write_plugins(self, interfaces, adapter, ifAttributes):
-        ''' Write plugins options, currently hostapd. '''
+        """ Write plugins options, currently hostapd. """
         for field in self._plugins:
             try:
                 if field in ifAttributes and ifAttributes[field] != 'None':
@@ -171,7 +180,7 @@ class InterfacesWriter:
                 pass
 
     def _write_unknown(self, interfaces, adapter, ifAttributes):
-        ''' Write unknowns options '''
+        """ Write unknowns options """
         try:
             for k, v in ifAttributes['unknown'].iteritems():
                 if v:
@@ -181,13 +190,13 @@ class InterfacesWriter:
             pass
 
     def _backup_interfaces(self):
-        ''' return True/False, command output '''
+        """ return True/False, command output """
 
         if self._backup_path:
             shutil.copy(self._interfaces_path, self._backup_path)
 
     def _restore_interfaces(self):
-        ''' return True/False, command output '''
+        """ return True/False, command output """
 
         if self._backup_path:
             shutil.copy(self._backup_path, self._interfaces_path)

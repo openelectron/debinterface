@@ -3,7 +3,7 @@ import socket
 
 
 class NetworkAdapter:
-    ''' A representation a network adapter. '''
+    """ A representation a network adapter. """
 
     _valid = {
         'hotplug': {'type': bool},
@@ -18,7 +18,8 @@ class NetworkAdapter:
         'dns-nameservers': {'type': 'IP'},
         'addrFam': {'in': ['inet', 'inet6', 'ipx']},
         'source': {'in': ['dhcp', 'static', 'loopback', 'manual',
-                          'bootp', 'ppp', 'wvdial', 'dynamic', 'ipv4ll', 'v4tunnel']},
+                          'bootp', 'ppp', 'wvdial', 'dynamic',
+                          'ipv4ll', 'v4tunnel']},
         'hostapd': {},
         'bridge-opts': {'type': dict},
         'up': {'type': list},
@@ -36,7 +37,7 @@ class NetworkAdapter:
         return self._ifAttributes[attr]
 
     def validateAll(self):
-        ''' Not thorough validations... and quick coded. Raise ValueError '''
+        """ Not thorough validations... and quick coded. Raise ValueError """
 
         for k, v in self._valid.items():
             val = None
@@ -48,14 +49,19 @@ class NetworkAdapter:
         if self._ifAttributes["source"] == "static":
             for req in ["address", "netmask"]:
                 if req not in self._ifAttributes:
-                    raise ValueError("{0} field is required for static interface".format(req))
+                    msg = ("{0} field is required for "
+                           "static interface".format(req))
+                    raise ValueError(msg)
         elif self._ifAttributes["source"] == "dhcp":
             for req in ["address", "netmask"]:
-                if req in self._ifAttributes and self._ifAttributes[req] is not None:
-                    raise ValueError("{0} field is forbidden for dhcp interface".format(req))
+                if req in self._ifAttributes:
+                    if self._ifAttributes[req] is not None:
+                        msg = ("{0} field is forbidden for "
+                               "dhcp interface".format(req))
+                        raise ValueError(msg)
 
     def validateOne(self, opt, validations, val):
-        ''' Not thorough validations... and quick coded. Raise ValueError '''
+        """ Not thorough validations... and quick coded. Raise ValueError """
         if validations is None:
             return
         if not val:
@@ -69,85 +75,97 @@ class NetworkAdapter:
                 try:
                     self.validateIP(val)
                 except socket.error:
-                    raise ValueError("{0} should be a valid IP (got : {1})".format(opt, val))
+                    msg = ("{0} should be a valid IP "
+                           "(got : {1})".format(opt, val))
+                    raise ValueError(msg)
             else:
                 if not isinstance(val, validations['type']):
-                    raise ValueError("{0} should be {1}".format(opt, str(validations['type'])))
+                    msg = "{0} should be {1}".format(opt, validations['type'])
+                    raise ValueError(msg)
         if 'in' in validations:
             if val not in validations['in']:
-                raise ValueError("{0} should be in {1}".format(opt, ", ".join(validations['in'])))
+                err_validations = ", ".join(validations['in'])
+                msg = "{0} should be in {1}".format(opt, err_validations)
+                raise ValueError(msg)
 
     def validateIP(self, ip):
-        '''
+        """
             Validate an IP Address
             Raise socket.error on invalid IP
             Works for subnet masks too.
-        '''
+        """
         socket.inet_aton(ip)
         if "." not in str(ip):
             raise socket.error("I need an ip with dots or :")
 
     def setName(self, n):
-        ''' Set the name option of an interface. '''
+        """ Set the name option of an interface. """
         self.validateOne('name', self._valid['name'], n)
         self._ifAttributes['name'] = str(n)
 
     def setAddrFam(self, i):
-        ''' Set the address family option of an interface. '''
+        """ Set the address family option of an interface. """
 
         self.validateOne('addrFam', self._valid['addrFam'], i)
         self._ifAttributes['addrFam'] = i
 
     def setAddressSource(self, s):
-        ''' Set the address source for an interface. (DHCP/static, etc) Called method normally'''
+        """ Set the address source for an interface.
+
+        Valid values are : dhcp, static, loopback, manual,
+        bootp, ppp, wvdial, dynamic, ipv4ll, v4tunnel
+
+            Args:
+                s (string): address source for an interface
+        """
 
         self.validateOne('source', self._valid['source'], s)
         self._ifAttributes['source'] = s
 
     def setAddress(self, a):
-        ''' Set the ipaddress of an interface. '''
+        """ Set the ipaddress of an interface. """
 
         self.validateOne('address', self._valid['address'], a)
         self._ifAttributes['address'] = a
 
     def setNetmask(self, m):
-        ''' Set the netmask of an interface. '''
+        """ Set the netmask of an interface. """
 
         self.validateOne('netmask', self._valid['netmask'], m)
         self._ifAttributes['netmask'] = m
 
     def setGateway(self, g):
-        ''' Set the default gateway of an interface. '''
+        """ Set the default gateway of an interface. """
 
         self.validateOne('gateway', self._valid['gateway'], g)
         self._ifAttributes['gateway'] = g
 
     def setBroadcast(self, b):
-        ''' Set the broadcast address of an interface. '''
+        """ Set the broadcast address of an interface. """
 
         self.validateOne('broadcast', self._valid['broadcast'], b)
         self._ifAttributes['broadcast'] = b
 
     def setNetwork(self, w):
-        ''' Set the network identifier of an interface.'''
+        """ Set the network identifier of an interface."""
 
         self.validateOne('network', self._valid['network'], w)
         self._ifAttributes['network'] = w
 
     def setAuto(self, t):
-        ''' Set the option to autostart the interface. '''
+        """ Set the option to autostart the interface. """
 
         self.validateOne('auto', self._valid['auto'], t)
         self._ifAttributes['auto'] = t
 
     def setHotplug(self, h):
-        ''' Set the option to allow hotplug on the interface. '''
+        """ Set the option to allow hotplug on the interface. """
 
         self.validateOne('hotplug', self._valid['hotplug'], h)
         self._ifAttributes['hotplug'] = h
 
     def setHostapd(self, h):
-        ''' Set the wifi conf file on the interface. '''
+        """ Set the wifi conf file on the interface. """
 
         self.validateOne('hostapd', self._valid['hostapd'], h)
         self._ifAttributes['hostapd'] = h
@@ -157,11 +175,11 @@ class NetworkAdapter:
         self._ifAttributes['dns-nameservers'] = h
 
     def setBropts(self, opts):
-        '''
+        """
             Set or append the bridge options of an interface.
             This should be a dictionary mapping option names and values.
             In the interfaces file, options will have a 'bridge_' prefix.
-        '''
+        """
 
         self.validateOne('bridge-opts', self._valid['bridge-opts'], opts)
         self._ifAttributes['bridge-opts'] = opts
@@ -170,13 +188,16 @@ class NetworkAdapter:
         self._ifAttributes['bridge-opts'][key] = value
 
     def appendBropts(self, key, value):
-        self._ifAttributes['bridge-opts'][key] = self._ifAttributes['bridge-opts'][key] + value
+        new_value = self._ifAttributes['bridge-opts'][key] + value
+        self._ifAttributes['bridge-opts'][key] = new_value
 
     def setUp(self, up):
-        '''
-            Set and add to the up commands for an interface.
-            Takes a LIST of shell commands.
-        '''
+        """Set and add to the up commands for an interface.
+        Takes a LIST of shell commands.
+
+            Args:
+                up (list): list of shell commands
+        """
         if isinstance(up, list):
             self._ifAttributes['up'] = up
         else:
@@ -186,10 +207,10 @@ class NetworkAdapter:
         self._ensure_list(self._ifAttributes, "up", cmd)
 
     def setDown(self, down):
-        '''
+        """
             Set and add to the down commands for an interface.
             Takes a LIST of shell commands.
-        '''
+        """
         if isinstance(down, list):
             self._ifAttributes['down'] = down
         else:
@@ -199,10 +220,10 @@ class NetworkAdapter:
         self._ensure_list(self._ifAttributes, "down", cmd)
 
     def setPreUp(self, pre):
-        '''
+        """
             Set and add to the pre-up commands for an interface.
             Takes a LIST of shell commands.
-        '''
+        """
         if isinstance(pre, list):
             self._ifAttributes['pre'] = pre
         else:
@@ -212,23 +233,29 @@ class NetworkAdapter:
         self._ensure_list(self._ifAttributes, "pre-up", cmd)
 
     def setPostDown(self, post):
-        '''
+        """
             Set and add to the post-down commands for an interface.
             Takes a LIST of shell commands.
-        '''
+        """
         self._ifAttributes['post-down'] = post
 
     def appendPostDown(self, cmd):
         self._ensure_list(self._ifAttributes, "post-down", cmd)
 
     def setUnknown(self, key, val):
-        ''' it's impossible to know about all available options, so storing uncommon ones as if '''
+        """Stores uncommon options as there are with no special handling
+
+        It's impossible to know about all available options
+        """
         if 'unknown' not in self._ifAttributes:
             self._ifAttributes['unknown'] = {}
         self._ifAttributes['unknown'][key] = val
 
     def export(self, options_list=None):
-        ''' Return the ifAttributes data structure. You can pass a list of parameters you want '''
+        """ Return the ifAttributes data structure.
+
+        You can pass a list of parameters you want
+        """
 
         if options_list:
             ret = {}
@@ -242,7 +269,7 @@ class NetworkAdapter:
             return self._ifAttributes
 
     def display(self):
-        ''' Display a (kind of) human readable representation of the adapter. '''
+        """Display a (kind of) human readable representation of the adapter."""
         print('============')
         for key in self._ifAttributes.keys():
             if isinstance(self._ifAttributes[key], list):
@@ -264,7 +291,7 @@ class NetworkAdapter:
         self.set_options(options)
 
     def reset(self):
-        ''' Initialize attribute storage structre. '''
+        """ Initialize attribute storage structre. """
         self._ifAttributes = {}
         self._ifAttributes['bridge-opts'] = {}
         self._ifAttributes['up'] = []
@@ -273,7 +300,7 @@ class NetworkAdapter:
         self._ifAttributes['post-down'] = []
 
     def set_options(self, options):
-        ''' raise ValueError or socket.error on issue '''
+        """ raise ValueError or socket.error on issue """
 
         # Set the name of the interface.
         if isinstance(options, str):
@@ -324,10 +351,18 @@ class NetworkAdapter:
                 self.reset()
                 raise
         else:
-            raise ValueError("No arguments given. Provide a name or options dict.")
+            raise ValueError("No arguments given. Provide a name "
+                             "or options dict.")
 
     def _ensure_list(self, dic, key, value):
-        """Ensure the data for the given key will be in a list. If value is a list, will be flattened"""
+        """Ensure the data for the given key will be in a list.
+        If value is a list, will be flattened
+
+            Args:
+                dic (dict): source dict
+                key (string): key to use in dic
+                value: the data. Will be appended into a list if it's not one
+        """
         if key not in dic:
             dic[key] = []
         if type(dic[key]) != list:

@@ -4,7 +4,7 @@ import unittest
 from debinterface.interfacesReader import InterfacesReader
 
 
-INF_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "interfaces")
+INF_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "interfaces.txt")
 
 class TestInterfacesReader(unittest.TestCase):
     def test_parse_interfaces_count(self):

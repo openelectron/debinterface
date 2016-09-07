@@ -1,0 +1,7 @@
+include *.md
+include *.rst
+include *.txt
+recursive-include test *.py
+
+# added by check_manifest.py
+recursive-include test *.txt

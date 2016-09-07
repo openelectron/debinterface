@@ -6,7 +6,7 @@ import subprocess
 
 
 def safe_subprocess(command_array):
-    '''Executes shell command. Do not raise
+    """Executes shell command. Do not raise
 
         Args:
             command_array (list): ideally an array of string elements, but
@@ -14,7 +14,7 @@ def safe_subprocess(command_array):
 
         Returns:
             True/False, command output
-    '''
+    """
 
     try:
         # Ensure all args are strings
