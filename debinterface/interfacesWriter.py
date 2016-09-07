@@ -1,7 +1,8 @@
 # Write interface
 import shutil
 from string import Template
-import toolutils
+
+import debinterface.toolutils as toolutils
 
 
 class InterfacesWriter:
