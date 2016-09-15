@@ -3,7 +3,8 @@ import copy
 import os
 import shutil
 import socket
-import toolutils
+
+import debinterface.toolutils as toolutils
 
 
 DEFAULT_CONFIG = {
@@ -153,7 +154,7 @@ class DnsmasqRange(object):
         self.backup()
 
         with toolutils.atomic_write(path) as dnsmasq:
-            for k, v in self._config.iteritems():
+            for k, v in self._config.items():
                 if k == "dhcp-range":
                     if not v:
                         continue

@@ -20,7 +20,7 @@ class TestDnsmasqRange(unittest.TestCase):
     def test_read(self):
         self.maxDiff = None
         with tempfile.NamedTemporaryFile() as source:
-            source.write(DEFAULT_CONTENT)
+            source.write(DEFAULT_CONTENT.encode("ascii"))
             source.flush()
             dns = DnsmasqRange(source.name)
             dns.read()
@@ -33,7 +33,7 @@ class TestDnsmasqRange(unittest.TestCase):
             dns._config = copy.deepcopy(DEFAULT_CONFIG)
             dns.write()
             source.flush()
-            content = source.read().replace("\n", "")
+            content = source.read().decode("ascii").replace("\n", "")
             for line in DEFAULT_CONTENT.split("\n"):
                 if not line or line == "\n":
                     continue
@@ -78,7 +78,7 @@ class TestDnsmasqRange(unittest.TestCase):
 
     def test_backup(self):
         with tempfile.NamedTemporaryFile() as source:
-            source.write(DEFAULT_CONTENT)
+            source.write(DEFAULT_CONTENT.encode("ascii"))
             source.flush()
             dns = DnsmasqRange(source.name)
             dns.backup()
@@ -87,7 +87,7 @@ class TestDnsmasqRange(unittest.TestCase):
     def test_restore(self):
         backup = tempfile.NamedTemporaryFile()
         conffile = tempfile.NamedTemporaryFile()
-        backup.write(DEFAULT_CONTENT)
+        backup.write(DEFAULT_CONTENT.encode("ascii"))
         backup.flush()
         dns = DnsmasqRange(conffile.name, backup.name)
         dns.restore()
@@ -106,7 +106,7 @@ class TestDnsmasqRange(unittest.TestCase):
             "start": "118.118.10.50", "end": "118.118.10.230"
         }
         self.assertEqual(set(expected.keys()), set(info.keys()))
-        for expected_key, expected_value in expected.iteritems():
+        for expected_key, expected_value in expected.items():
             self.assertEqual(expected_value, info[expected_key])
 
     def test_update_range(self):
@@ -126,5 +126,5 @@ class TestDnsmasqRange(unittest.TestCase):
         )
         cur_range = dns.get_itf_range("wlan0")
         self.assertEqual(set(expected.keys()), set(cur_range.keys()))
-        for expected_key, expected_value in expected.iteritems():
+        for expected_key, expected_value in expected.items():
             self.assertEqual(expected_value, cur_range[expected_key])

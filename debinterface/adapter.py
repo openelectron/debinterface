@@ -39,7 +39,7 @@ class NetworkAdapter:
     def validateAll(self):
         """ Not thorough validations... and quick coded. Raise ValueError """
 
-        for k, v in self._valid.iteritems():
+        for k, v in self._valid.items():
             val = None
             if k in self._ifAttributes:
                 val = self._ifAttributes[k]

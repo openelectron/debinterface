@@ -72,7 +72,7 @@ class TestHostapd(unittest.TestCase):
     def test_read(self):
         self.maxDiff = None
         with tempfile.NamedTemporaryFile() as source:
-            source.write(DEFAULT_CONTENT)
+            source.write(DEFAULT_CONTENT.encode("ascii"))
             source.flush()
             dns = Hostapd(source.name)
             dns.read()
@@ -85,7 +85,7 @@ class TestHostapd(unittest.TestCase):
             dns._config = DEFAULT_CONFIG
             dns.write()
             source.flush()
-            content = source.read().replace("\n", "")
+            content = source.read().decode("ascii").replace("\n", "")
             for line in DEFAULT_CONTENT.split("\n"):
                 if not line or line == "\n":
                     continue
@@ -102,7 +102,7 @@ class TestHostapd(unittest.TestCase):
 
     def test_backup(self):
         with tempfile.NamedTemporaryFile() as source:
-            source.write(DEFAULT_CONTENT)
+            source.write(DEFAULT_CONTENT.encode("ascii"))
             source.flush()
             dns = Hostapd(source.name)
             dns.backup()
@@ -111,7 +111,7 @@ class TestHostapd(unittest.TestCase):
     def test_restore(self):
         backup = tempfile.NamedTemporaryFile()
         conffile = tempfile.NamedTemporaryFile()
-        backup.write(DEFAULT_CONTENT)
+        backup.write(DEFAULT_CONTENT.encode("ascii"))
         backup.flush()
         dns = Hostapd(conffile.name, backup.name)
         dns.restore()

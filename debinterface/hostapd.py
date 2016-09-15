@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import shutil
-import toolutils
+
+import debinterface.toolutils as toolutils
 
 
 class Hostapd(object):
@@ -141,7 +142,7 @@ class Hostapd(object):
         self.backup()
 
         with toolutils.atomic_write(path) as hostapd:
-            for k, v in self._config.iteritems():
+            for k, v in self._config.items():
                 key = str(k).strip()
                 value = str(v).strip()
                 hostapd.write("{0}={1}\n".format(key, value))
