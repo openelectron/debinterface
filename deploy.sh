@@ -7,6 +7,11 @@
 # Test
 python setup.py test
 
+# Cleanup
+rm -rf debinterface.egg-info
+rm -rf build
+rm -rf dist
+
 # check
 check-manifest -u -v
 
