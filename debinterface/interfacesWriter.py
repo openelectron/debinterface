@@ -1,7 +1,8 @@
 # Write interface
 import shutil
 from string import Template
-import toolutils
+
+import debinterface.toolutils as toolutils
 
 
 class InterfacesWriter:
@@ -82,7 +83,7 @@ class InterfacesWriter:
         try:
             adapter.validateAll()
         except ValueError as e:
-            print(e.message)
+            print(repr(e))
             raise
 
         ifAttributes = adapter.export()
@@ -182,7 +183,7 @@ class InterfacesWriter:
     def _write_unknown(self, interfaces, adapter, ifAttributes):
         """ Write unknowns options """
         try:
-            for k, v in ifAttributes['unknown'].iteritems():
+            for k, v in ifAttributes['unknown'].items():
                 if v:
                     d = dict(varient=k, value=str(v))
                     interfaces.write(self._cmd.substitute(d))

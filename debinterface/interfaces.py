@@ -1,8 +1,8 @@
 # A class representing the contents of /etc/network/interfaces
-from interfacesWriter import InterfacesWriter
-from interfacesReader import InterfacesReader
-from adapter import NetworkAdapter
-import toolutils
+from debinterface.interfacesWriter import InterfacesWriter
+from debinterface.interfacesReader import InterfacesReader
+from debinterface.adapter import NetworkAdapter
+import debinterface.toolutils as toolutils
 
 
 class Interfaces:
