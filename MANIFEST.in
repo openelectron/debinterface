@@ -5,3 +5,7 @@ recursive-include test *.py
 
 # added by check_manifest.py
 recursive-include test *.txt
+
+# added by check_manifest.py
+include *.sh
+include tox.ini

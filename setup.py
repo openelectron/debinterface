@@ -18,7 +18,7 @@ def read(*parts):
 
 REQUIREMENTS = []
 
-VERSION = "3.0.0"
+VERSION = "3.0.1"
 URL = 'https://github.com/nMustaki/debinterface'
 
 
