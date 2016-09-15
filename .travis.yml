@@ -3,16 +3,11 @@
 
 language: python
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
+  - 2.7
+  - 3.4
+  - 3.5
 
 cache: pip
-
-env:
-  - TOXENV=py27
-  - TOXENV=py34
-  - TOXENV=py35
 
 install: pip install tox tox-travis
 
