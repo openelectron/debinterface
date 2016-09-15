@@ -9,6 +9,11 @@ From http://keepachangelog.com
 ### Fixed
 ### Removed
 
+## 3.1 - 2016-09-15
+### Fixed
+- wrong paramter to ifup, thanks dimagafurov
+
+
 ## 3.0 - 2016-08-15
 ### Changed
 - Makes flake8 happy
