@@ -183,7 +183,7 @@ class InterfacesWriter:
     def _write_unknown(self, interfaces, adapter, ifAttributes):
         """ Write unknowns options """
         try:
-            for k, v in ifAttributes['unknown'].iteritems():
+            for k, v in ifAttributes['unknown'].items():
                 if v:
                     d = dict(varient=k, value=str(v))
                     interfaces.write(self._cmd.substitute(d))
