@@ -68,9 +68,9 @@ class Interfaces:
         adapter.validateAll()
 
         if index is None:
-            self._adapters.insert(index, adapter)
-        else:
             self._adapters.append(adapter)
+        else:
+            self._adapters.insert(index, adapter)
         return adapter
 
     def removeAdapter(self, index):
