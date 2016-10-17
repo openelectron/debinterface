@@ -6,8 +6,11 @@ From http://keepachangelog.com
 ## [Unreleased][unreleased]
 ### Added
 ### Changed
+- dnsmasqRange.rm_itf_range returns False is nothing was changed
+
 ### Fixed
 ### Removed
+
 
 ## 3.0.1 - 2016-09-15
 ### Fixed

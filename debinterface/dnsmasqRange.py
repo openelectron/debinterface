@@ -117,13 +117,20 @@ class DnsmasqRange(object):
                 return v
 
     def rm_itf_range(self, if_name):
-        """ Rm range info for the given if """
+        ''' Rm range info for the given interface
+
+            Args:
+                if_name (string) : interface name
+            Returns:
+                boolean : True if configuration was updated, False otherwise
+        '''
 
         if "dhcp-range" in self._config:
-            self._config['dhcp-range'][:] = [
-                x for x in self._config['dhcp-range']
-                if x["interface"] != if_name
-            ]
+            current_len = len(self._config['dhcp-range'])
+            self._config['dhcp-range'][:] = [x for x in self._config['dhcp-range'] if x["interface"] != if_name]
+            if len(self._config['dhcp-range']) < current_len:
+                return True
+        return False
 
     def set_defaults(self):
         """ Defaults for my needs, you should probably override this one """
@@ -209,7 +216,7 @@ class DnsmasqRange(object):
             ret["start"] = breaked[1]
             ret["end"] = breaked[2]
             ret["lease_time"] = breaked[3]
-        except:
+        except Exception:
             pass
         return ret
 
