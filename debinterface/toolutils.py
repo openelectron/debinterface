@@ -1,6 +1,5 @@
 import os
 import tempfile
-import shutil
 from contextlib import contextmanager
 import subprocess
 
@@ -39,9 +38,12 @@ def atomic_write(filepath):
         :param filepath: the file path to be opened
     """
 
-    with tempfile.NamedTemporaryFile() as tf:
+    # Put tmp file to same directory as target file, to allow atomic move
+    realpath = os.path.realpath(filepath)
+    tmppath = os.path.dirname(realpath)
+    with tempfile.NamedTemporaryFile(dir=tmppath, delete=False) as tf:
         with open(tf.name, mode='w+') as tmp:
             yield tmp
             tmp.flush()
             os.fsync(tmp.fileno())
-        shutil.copy(tf.name, filepath)
+        os.rename(tf.name, realpath)
