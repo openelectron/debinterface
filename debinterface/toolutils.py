@@ -23,27 +23,26 @@ def safe_subprocess(command_array):
             command_array_str = [str(command_array)]
         return True, subprocess.check_output(command_array_str,
                                              stderr=subprocess.STDOUT)
-    except OSError as e:
-        return False, e.__str__()
-    except subprocess.CalledProcessError as e:
-        return False, e.output
+    except OSError as ex:
+        return False, ex.__str__()
+    except subprocess.CalledProcessError as ex:
+        return False, ex.output
 
 
 @contextmanager
 def atomic_write(filepath):
     """
-        Writeable file object that atomically
-        updates a file (using a temporary file).
+        Writeable file object that atomically updates a file (using a temporary file).
 
-        :param filepath: the file path to be opened
+        Args:
+            filepath (str): the file path to be opened
     """
-
     # Put tmp file to same directory as target file, to allow atomic move
     realpath = os.path.realpath(filepath)
     tmppath = os.path.dirname(realpath)
-    with tempfile.NamedTemporaryFile(dir=tmppath, delete=False) as tf:
-        with open(tf.name, mode='w+') as tmp:
+    with tempfile.NamedTemporaryFile(dir=tmppath, delete=False) as tempf:
+        with open(tempf.name, mode='w+') as tmp:
             yield tmp
             tmp.flush()
             os.fsync(tmp.fileno())
-        os.rename(tf.name, realpath)
+        os.rename(tempf.name, realpath)

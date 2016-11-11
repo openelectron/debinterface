@@ -4,7 +4,7 @@
 from debinterface.adapter import NetworkAdapter
 
 
-class InterfacesReader:
+class InterfacesReader(object):
     """ Short lived class to read interfaces file """
 
     def __init__(self, interfaces_path):

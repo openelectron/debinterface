@@ -5,7 +5,7 @@ from debinterface.adapter import NetworkAdapter
 import debinterface.toolutils as toolutils
 
 
-class Interfaces:
+class Interfaces(object):
     _interfaces_path = '/etc/network/interfaces'
 
     def __init__(self, update_adapters=True,

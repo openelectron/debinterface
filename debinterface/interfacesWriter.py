@@ -5,7 +5,7 @@ from string import Template
 import debinterface.toolutils as toolutils
 
 
-class InterfacesWriter:
+class InterfacesWriter(object):
     """ Short lived class to write interfaces file """
 
     # Define templetes for blocks used in /etc/network/interfaces.
