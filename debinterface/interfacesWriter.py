@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 # Write interface
+from __future__ import print_function, with_statement
 import shutil
 from string import Template
 
@@ -101,7 +103,7 @@ class InterfacesWriter(object):
     def _write_auto(self, interfaces, adapter, ifAttributes):
         """ Write if applicable """
         try:
-            if adapter._ifAttributes['auto'] is True:
+            if adapter.attributes['auto'] is True:
                 d = dict(name=ifAttributes['name'])
                 interfaces.write(self._auto.substitute(d))
         except KeyError:

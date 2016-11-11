@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import tempfile
 from contextlib import contextmanager
@@ -12,7 +13,7 @@ def safe_subprocess(command_array):
                 may be a string. Will be converted to an array of strings
 
         Returns:
-            True/False, command output
+            bool, str: True/False (command succeeded), command output
     """
 
     try:

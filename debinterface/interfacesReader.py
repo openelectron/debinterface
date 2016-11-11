@@ -25,12 +25,12 @@ class InterfacesReader(object):
 
         for entry in self._auto_list:
             for adapter in self._adapters:
-                if adapter._ifAttributes['name'] == entry:
+                if adapter.attributes['name'] == entry:
                     adapter.setAuto(True)
 
         for entry in self._hotplug_list:
             for adapter in self._adapters:
-                if adapter._ifAttributes['name'] == entry:
+                if adapter.attributes['name'] == entry:
                     adapter.setHotplug(True)
 
         return self._adapters

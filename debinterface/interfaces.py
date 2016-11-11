@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # A class representing the contents of /etc/network/interfaces
 from debinterface.interfacesWriter import InterfacesWriter
 from debinterface.interfacesReader import InterfacesReader
@@ -10,7 +11,13 @@ class Interfaces(object):
 
     def __init__(self, update_adapters=True,
                  interfaces_path=None, backup_path=None):
-        """ By default read interface file on init """
+        """ By default read interface file on init
+
+            Args:
+                update_adapters (bool, optional): load adapters from interface file. Default True
+                interfaces_path (str, optional): default to /etc/network/interfaces
+                backup_path (str, optional): default to /etc/network/interfaces.bak
+        """
 
         self._set_paths(interfaces_path, backup_path)
 
@@ -47,11 +54,18 @@ class Interfaces(object):
         ).write_interfaces()
 
     def getAdapter(self, name):
-        """ Find adapter by interface name """
+        """ Find adapter by interface name
+
+            Args:
+                name (str): the name of the interface
+
+            Returns:
+                NetworkAdapter: the new adapter
+        """
         return next(
             (
                 x for x in self._adapters
-                if x._ifAttributes['name'] == name
+                if x.attributes['name'] == name
             ),
             None)
 
@@ -63,6 +77,9 @@ class Interfaces(object):
             Args:
                 options (string or dict): options to build a network adaptator
                 index (integer, optional): index to insert the NetworkAdapter
+
+            Returns:
+                NetworkAdapter: the new adapter
         """
         adapter = NetworkAdapter(options)
         adapter.validateAll()
@@ -74,28 +91,57 @@ class Interfaces(object):
         return adapter
 
     def removeAdapter(self, index):
-        """ Remove the adapter at the given index. """
+        """ Remove the adapter at the given index.
+
+            Args:
+                index (int): the position of the adapter
+        """
         self._adapters.pop(index)
 
     def removeAdapterByName(self, name):
-        """ Remove the adapter with the given name. """
+        """ Remove the adapter with the given name.
+
+            Args:
+                name (str): the name of the interface
+        """
         self._adapters = [
             x for x in self._adapters
-            if x._ifAttributes['name'] != name
+            if x.attributes['name'] != name
         ]
 
-    def upAdapter(self, if_name):
-        """ return True/False, command output. Use ifup. """
+    @staticmethod
+    def upAdapter(if_name):
+        """Uses ifup
+
+            Args:
+                if_name (str): the name of the interface
+
+            Returns:
+                bool, str: True/False, command output.
+        """
 
         return toolutils.safe_subprocess(["/sbin/ifup", if_name])
 
-    def downAdapter(self, if_name):
-        """ return True/False, command output. Use ifdown. """
+    @staticmethod
+    def downAdapter(if_name):
+        """Uses ifdown
+
+            Args:
+                if_name (str): the name of the interface
+
+            Returns:
+                bool, str: True/False, command output.
+        """
 
         return toolutils.safe_subprocess(["/sbin/ifdown", if_name])
 
     def _set_paths(self, interfaces_path, backup_path):
-        """ either use user input or defaults """
+        """ either use user input or defaults
+
+            Args:
+                interfaces_path (str): path to interfaces file
+                backup_path (str): default to interfaces_path + .bak
+        """
 
         if interfaces_path is not None:
             self._interfaces_path = interfaces_path
@@ -103,4 +149,5 @@ class Interfaces(object):
         if backup_path:
             self._backup_path = backup_path
         else:
+            # self._interfaces_path is never None
             self._backup_path = self._interfaces_path + ".bak"

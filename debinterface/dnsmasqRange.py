@@ -89,12 +89,13 @@ class DnsmasqRange(object):
         """Update existing range based on the interface name
         If does not exist will be created
             Args:
-                interface (string): interface name
-                start (string) : start ip of range
-                end (string) : end ip of range
-                lease_time (string) : lease_time
+                interface (str): interface name
+                start (str) : start ip of range
+                end (str) : end ip of range
+                lease_time (str) : lease_time
+
             Returns:
-                boolean : True if configuration was updated or created,
+                bool: True if configuration was updated or created,
                             False otherwise
         """
         current_range = self.get_itf_range(interface)
@@ -120,9 +121,10 @@ class DnsmasqRange(object):
         ''' Rm range info for the given interface
 
             Args:
-                if_name (string) : interface name
+                if_name (str) : interface name
+
             Returns:
-                boolean : True if configuration was updated, False otherwise
+                bool: True if configuration was updated, False otherwise
         '''
 
         if "dhcp-range" in self._config:
@@ -176,7 +178,8 @@ class DnsmasqRange(object):
                     value = str(v).strip()
                     dnsmasq.write("{0}={1}\n".format(key, value))
 
-    def controlService(self, action):
+    @staticmethod
+    def controlService(action):
         """ return True/False, command output """
 
         if action not in ["start", "stop", "restart"]:
@@ -208,7 +211,8 @@ class DnsmasqRange(object):
         if self.backup_path:
             os.remove(self._path)
 
-    def _extract_range_info(self, value):
+    @staticmethod
+    def _extract_range_info(value):
         ret = {}
         try:
             breaked = value.split(",")
