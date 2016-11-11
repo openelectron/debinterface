@@ -24,6 +24,9 @@ class TestInterfacesReader(unittest.TestCase):
     def test_dnsnameservers_not_unknown(self):
         """All adapters should validate"""
         reader = InterfacesReader(INF_PATH)
-        eth1 = next((x for x in reader.parse_interfaces() if x._ifAttributes['name'] == "eth1"), None)
+        eth1 = next(
+            (x for x in reader.parse_interfaces() if x._ifAttributes['name'] == "eth1"),
+            None
+        )
         self.assertNotEqual(eth1, None)
         self.assertEqual(eth1._ifAttributes["dns-nameservers"], "8.8.8.8")

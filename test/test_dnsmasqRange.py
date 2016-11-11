@@ -33,7 +33,7 @@ class TestDnsmasqRange(unittest.TestCase):
             dns._config = copy.deepcopy(DEFAULT_CONFIG)
             dns.write()
             source.flush()
-            content = source.read().decode("ascii").replace("\n", "")
+            content = open(source.name).read().decode("ascii").replace("\n", "")
             for line in DEFAULT_CONTENT.split("\n"):
                 if not line or line == "\n":
                     continue
