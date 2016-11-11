@@ -9,6 +9,10 @@ From http://keepachangelog.com
 - dnsmasqRange.rm_itf_range returns False is nothing was changed
 
 ### Fixed
+- shutil.copy is replaced by os.rename which is atomic
+- bad if/else
+- failing tests
+
 ### Removed
 
 
