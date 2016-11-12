@@ -12,6 +12,7 @@ From http://keepachangelog.com
 - shutil.copy is replaced by os.rename which is atomic
 - bad if/else
 - failing tests
+- NetworkAdapter : missing pre-down function
 
 ### Removed
 
