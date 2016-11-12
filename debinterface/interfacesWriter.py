@@ -20,7 +20,7 @@ class InterfacesWriter(object):
         'address', 'network', 'netmask', 'broadcast',
         'gateway', 'dns-nameservers'
     ]
-    _prepFields = ['pre-up', 'up', 'down', 'post-down']
+    _prepFields = ['pre-up', 'up', 'down', 'pre-down', 'post-down']
     _bridgeFields = ['ports', 'fd', 'hello', 'maxage', 'stp']
     _plugins = ["hostapd"]
 
@@ -65,6 +65,11 @@ class InterfacesWriter(object):
             Raises:
                 ValueError : if invalid network interfaces
         """
+        ret = False
+        output = ""
+        if not self._adapters:
+            return
+
         if interfaces_path == "/etc/network/interfaces":
             ret, output = toolutils.safe_subprocess(["ifup", "-a", "--no-act"])
         else:

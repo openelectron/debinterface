@@ -357,9 +357,9 @@ class NetworkAdapter(object):
                 pre (list): list of shell commands
         """
         if isinstance(pre, list):
-            self._ifAttributes['pre'] = pre
+            self._ifAttributes['pre-up'] = pre
         else:
-            self._ifAttributes['pre'] = [pre]
+            self._ifAttributes['pre-up'] = [pre]
 
     def appendPreUp(self, cmd):
         """Append a shell command to run when the interface is pre-up.
@@ -368,6 +368,27 @@ class NetworkAdapter(object):
                 cmd (str): a shell command
         """
         self._ensure_list(self._ifAttributes, "pre-up", cmd)
+
+    def setPreDown(self, pre):
+        """Set and add to the pre-down commands for an interface.
+
+            Args:
+                pre (list): list of shell commands
+        """
+        if isinstance(pre, list):
+            self._ifAttributes['pre-down'] = pre
+        else:
+            self._ifAttributes['pre-down'] = [pre]
+
+
+    def appendPreDown(self, cmd):
+        """Append a shell command to run when the interface is pre-down.
+
+            Args:
+                cmd (str): a shell command
+        """
+        self._ensure_list(self._ifAttributes, "pre-down", cmd)
+
 
     def setPostDown(self, post):
         """Set and add to the post-down commands for an interface.
@@ -422,7 +443,7 @@ class NetworkAdapter(object):
     def display(self):
         """Display a (kind of) human readable representation of the adapter."""
         print('============')
-        for key, value in self._ifAttributes:
+        for key, value in self._ifAttributes.items():
             if isinstance(value, list):
                 print(key + ': ')
                 for item in value:
@@ -447,6 +468,7 @@ class NetworkAdapter(object):
         self._ifAttributes['up'] = []
         self._ifAttributes['down'] = []
         self._ifAttributes['pre-up'] = []
+        self._ifAttributes['pre-down'] = []
         self._ifAttributes['post-down'] = []
 
     def set_options(self, options):
@@ -470,7 +492,7 @@ class NetworkAdapter(object):
         # If a dictionary of options is provided, populate the adapter options.
         elif isinstance(options, dict):
             try:
-                for key, value in options:
+                for key, value in options.items():
                     if key == 'name':
                         self.setName(value)
                     elif key == 'addrFam':
@@ -499,6 +521,8 @@ class NetworkAdapter(object):
                         self.setDown(value)
                     elif key == 'pre-up':
                         self.setPreUp(value)
+                    elif key == 'pre-down':
+                        self.setPreDown(value)
                     elif key == 'post-down':
                         self.setPostDown(value)
                     elif key == 'hostapd':
