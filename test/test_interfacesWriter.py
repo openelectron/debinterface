@@ -81,7 +81,6 @@ class TestInterfacesWriter(unittest.TestCase):
             writer.write_interfaces()
 
             content = open(tempf.name).read().split("\n")
-            print(open(tempf.name).read())
             for line_written, line_expected in zip(content, expected):
                 self.assertEqual(line_written.strip(), line_expected)
 
@@ -116,6 +115,5 @@ class TestInterfacesWriter(unittest.TestCase):
             writer.write_interfaces()
 
             content = open(tempf.name).read().split("\n")
-            print(open(tempf.name).read())
             for line_written, line_expected in zip(content, expected):
                 self.assertEqual(line_written.strip(), line_expected)

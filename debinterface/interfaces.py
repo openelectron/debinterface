@@ -10,7 +10,8 @@ class Interfaces(object):
     _interfaces_path = '/etc/network/interfaces'
 
     def __init__(self, update_adapters=True,
-                 interfaces_path=None, backup_path=None):
+                 interfaces_path='/etc/network/interfaces',
+                 backup_path=None):
         """ By default read interface file on init
 
             Args:
@@ -60,7 +61,7 @@ class Interfaces(object):
                 name (str): the name of the interface
 
             Returns:
-                NetworkAdapter: the new adapter
+                NetworkAdapter: the new adapter or None if not found
         """
         return next(
             (
@@ -143,7 +144,7 @@ class Interfaces(object):
                 backup_path (str): default to interfaces_path + .bak
         """
 
-        if interfaces_path is not None:
+        if interfaces_path:
             self._interfaces_path = interfaces_path
 
         if backup_path:

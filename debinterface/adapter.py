@@ -7,32 +7,11 @@ every options on earth !
 """
 from __future__ import print_function, with_statement
 import socket
+from .adapterValidation import NetworkAdapterValidation, VALID_OPTS
 
 
 class NetworkAdapter(object):
     """ A representation a network adapter. """
-
-    _valid = {
-        'hotplug': {'type': bool},
-        'auto': {'type': bool},
-        'name': {'required': True},
-        'address': {'type': 'IP'},
-        'netmask': {'type': 'IP'},
-        'network': {'type': 'IP'},
-        'broadcast': {'type': 'IP'},
-        'gateway': {'type': 'IP'},
-        'bridge-opts': {'type': dict},
-        'dns-nameservers': {'type': 'IP'},
-        'addrFam': {'in': ['inet', 'inet6', 'ipx']},
-        'source': {'in': ['dhcp', 'static', 'loopback', 'manual',
-                          'bootp', 'ppp', 'wvdial', 'dynamic',
-                          'ipv4ll', 'v4tunnel']},
-        'hostapd': {},
-        'up': {'type': list},
-        'down': {'type': list},
-        'pre-up': {'type': list},
-        'post-down': {'type': list}
-    }
 
     @property
     def attributes(self):
@@ -47,27 +26,7 @@ class NetworkAdapter(object):
             Raises:
                 ValueError: if there is a validation error
         """
-
-        for k, v in self._valid.items():
-            val = None
-            if k in self._ifAttributes:
-                val = self._ifAttributes[k]
-            self.validateOne(k, v, val)
-
-        # Logic checks
-        if self._ifAttributes["source"] == "static":
-            for req in ["address", "netmask"]:
-                if req not in self._ifAttributes:
-                    msg = ("{0} field is required for "
-                           "static interface".format(req))
-                    raise ValueError(msg)
-        elif self._ifAttributes["source"] == "dhcp":
-            for req in ["address", "netmask"]:
-                if req in self._ifAttributes:
-                    if self._ifAttributes[req] is not None:
-                        msg = ("{0} field is forbidden for "
-                               "dhcp interface".format(req))
-                        raise ValueError(msg)
+        self._validator.validate_all(self._ifAttributes)
 
     def validateOne(self, opt, validations, val):
         """ Not thorough validations... and quick coded.
@@ -80,31 +39,7 @@ class NetworkAdapter(object):
             Raises:
                 ValueError: if there is a validation error
         """
-        if validations is None:
-            return
-        if not val:
-            if 'required' in validations and validations['required'] is True:
-                raise ValueError("{0} is a required option".format(opt))
-            else:
-                return
-
-        if 'type' in validations:
-            if validations['type'] == 'IP':
-                try:
-                    self.validateIP(val)
-                except socket.error:
-                    msg = ("{0} should be a valid IP "
-                           "(got : {1})".format(opt, val))
-                    raise ValueError(msg)
-            else:
-                if not isinstance(val, validations['type']):
-                    msg = "{0} should be {1}".format(opt, validations['type'])
-                    raise ValueError(msg)
-        if 'in' in validations:
-            if val not in validations['in']:
-                err_validations = ", ".join(validations['in'])
-                msg = "{0} should be in {1}".format(opt, err_validations)
-                raise ValueError(msg)
+        self._validator.validate_one(opt, validations, val)
 
     @staticmethod
     def validateIP(ip):
@@ -116,9 +51,10 @@ class NetworkAdapter(object):
             Raises:
                 socket.error on invalid IP
         """
-        socket.inet_aton(ip)
-        if "." not in str(ip):
-            raise socket.error("I need an ip with dots or :")
+        try:
+            socket.inet_aton(ip)
+        except socket.error:
+            socket.inet_pton(socket.AF_INET6, ip)
 
     def setName(self, name):
         """Set the name option of an interface.
@@ -129,7 +65,7 @@ class NetworkAdapter(object):
             Raises:
                 ValueError: if there is a validation error
         """
-        self.validateOne('name', self._valid['name'], name)
+        self._validator.validate_one('name', VALID_OPTS['name'], name)
         self._ifAttributes['name'] = str(name)
 
     def setAddrFam(self, address_family):
@@ -142,7 +78,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('addrFam', self._valid['addrFam'], address_family)
+        self._validator.validate_one('addrFam', VALID_OPTS['addrFam'], address_family)
         self._ifAttributes['addrFam'] = address_family
 
     def setAddressSource(self, address_source):
@@ -158,7 +94,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('source', self._valid['source'], address_source)
+        self._validator.validate_one('source', VALID_OPTS['source'], address_source)
         self._ifAttributes['source'] = address_source
 
     def setAddress(self, ip_address):
@@ -171,7 +107,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('address', self._valid['address'], ip_address)
+        self._validator.validate_one('address', VALID_OPTS['address'], ip_address)
         self._ifAttributes['address'] = ip_address
 
     def setNetmask(self, netmask):
@@ -184,7 +120,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('netmask', self._valid['netmask'], netmask)
+        self._validator.validate_one('netmask', VALID_OPTS['netmask'], netmask)
         self._ifAttributes['netmask'] = netmask
 
     def setGateway(self, gateway):
@@ -197,7 +133,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('gateway', self._valid['gateway'], gateway)
+        self._validator.validate_one('gateway', VALID_OPTS['gateway'], gateway)
         self._ifAttributes['gateway'] = gateway
 
     def setBroadcast(self, broadcast):
@@ -210,7 +146,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('broadcast', self._valid['broadcast'], broadcast)
+        self._validator.validate_one('broadcast', VALID_OPTS['broadcast'], broadcast)
         self._ifAttributes['broadcast'] = broadcast
 
     def setNetwork(self, network):
@@ -223,7 +159,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('network', self._valid['network'], network)
+        self._validator.validate_one('network', VALID_OPTS['network'], network)
         self._ifAttributes['network'] = network
 
     def setAuto(self, auto):
@@ -236,7 +172,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('auto', self._valid['auto'], auto)
+        self._validator.validate_one('auto', VALID_OPTS['auto'], auto)
         self._ifAttributes['auto'] = auto
 
     def setHotplug(self, hotplug):
@@ -249,7 +185,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('hotplug', self._valid['hotplug'], hotplug)
+        self._validator.validate_one('hotplug', VALID_OPTS['hotplug'], hotplug)
         self._ifAttributes['hotplug'] = hotplug
 
     def setHostapd(self, hostapd):
@@ -259,7 +195,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('hostapd', self._valid['hostapd'], hostapd)
+        self._validator.validate_one('hostapd', VALID_OPTS['hostapd'], hostapd)
         self._ifAttributes['hostapd'] = hostapd
 
     def setDnsNameservers(self, nameservers):
@@ -272,7 +208,7 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self.validateOne('dns-nameservers', self._valid['dns-nameservers'], nameservers)
+        self._validator.validate_one('dns-nameservers', VALID_OPTS['dns-nameservers'], nameservers)
         self._ifAttributes['dns-nameservers'] = nameservers
 
     def setBropts(self, opts):
@@ -287,7 +223,7 @@ class NetworkAdapter(object):
 
         """
 
-        self.validateOne('bridge-opts', self._valid['bridge-opts'], opts)
+        self._validator.validate_one('bridge-opts', VALID_OPTS['bridge-opts'], opts)
         self._ifAttributes['bridge-opts'] = opts
 
     def replaceBropt(self, key, value):
@@ -380,7 +316,6 @@ class NetworkAdapter(object):
         else:
             self._ifAttributes['pre-down'] = [pre]
 
-
     def appendPreDown(self, cmd):
         """Append a shell command to run when the interface is pre-down.
 
@@ -388,7 +323,6 @@ class NetworkAdapter(object):
                 cmd (str): a shell command
         """
         self._ensure_list(self._ifAttributes, "pre-down", cmd)
-
 
     def setPostDown(self, post):
         """Set and add to the post-down commands for an interface.
@@ -458,6 +392,8 @@ class NetworkAdapter(object):
 
     def __init__(self, options=None):
         # Initialize attribute storage structre.
+        self._validator = NetworkAdapterValidation()
+        self._valid = VALID_OPTS  # For backward compatibility
         self.reset()
         self.set_options(options)
 
@@ -469,6 +405,7 @@ class NetworkAdapter(object):
         self._ifAttributes['down'] = []
         self._ifAttributes['pre-up'] = []
         self._ifAttributes['pre-down'] = []
+        self._ifAttributes['post-up'] = []
         self._ifAttributes['post-down'] = []
 
     def set_options(self, options):
@@ -492,45 +429,32 @@ class NetworkAdapter(object):
         # If a dictionary of options is provided, populate the adapter options.
         elif isinstance(options, dict):
             try:
+                roseta = {
+                    'name': self.setName,
+                    'addrFam': self.setAddrFam,
+                    'source': self.setAddressSource,
+                    'address': self.setAddress,
+                    'netmask': self.setNetmask,
+                    'gateway': self.setGateway,
+                    'broadcast': self.setBroadcast,
+                    'network': self.setNetwork,
+                    'auto': self.setAuto,
+                    'allow-hotplug': self.setHotplug,
+                    'bridgeOpts': self.setBropts,
+                    'up': self.setUp,
+                    'down': self.setDown,
+                    'pre-up': self.setPreUp,
+                    'pre-down': self.setPreDown,
+                    'post-down': self.setPostDown,
+                    'hostapd': self.setHostapd,
+                    'dns-nameservers': self.setDnsNameservers
+                }
                 for key, value in options.items():
-                    if key == 'name':
-                        self.setName(value)
-                    elif key == 'addrFam':
-                        self.setAddrFam(value)
-                    elif key == 'source':
-                        self.setAddressSource(value)
-                    elif key == 'address':
-                        self.setAddress(value)
-                    elif key == 'netmask':
-                        self.setNetmask(value)
-                    elif key == 'gateway':
-                        self.setGateway(value)
-                    elif key == 'broadcast':
-                        self.setBroadcast(value)
-                    elif key == 'network':
-                        self.setNetwork(value)
-                    elif key == 'auto':
-                        self.setAuto(value)
-                    elif key == 'allow-hotplug':
-                        self.setHotplug(value)
-                    elif key == 'bridgeOpts':
-                        self.setBropts(value)
-                    elif key == 'up':
-                        self.setUp(value)
-                    elif key == 'down':
-                        self.setDown(value)
-                    elif key == 'pre-up':
-                        self.setPreUp(value)
-                    elif key == 'pre-down':
-                        self.setPreDown(value)
-                    elif key == 'post-down':
-                        self.setPostDown(value)
-                    elif key == 'hostapd':
-                        self.setHostapd(value)
-                    elif key == 'dns-nameservers':
-                        self.setDnsNameservers(value)
+                    if key in roseta:
+                        # keep KeyError for validation errors
+                        roseta[key](value)
                     else:
-                        # Store it as if
+                        # Store as if
                         self.setUnknown(key, value)
             except Exception:
                 self.reset()
