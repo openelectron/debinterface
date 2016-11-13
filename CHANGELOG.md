@@ -7,12 +7,13 @@ From http://keepachangelog.com
 ### Added
 ### Changed
 - dnsmasqRange.rm_itf_range returns False is nothing was changed
+- Removed validation code from NetworkAdapter to its own class
 
 ### Fixed
 - shutil.copy is replaced by os.rename which is atomic
 - bad if/else
 - failing tests
-- NetworkAdapter : missing pre-down function
+- NetworkAdapter : missing pre-down, post-up functions
 
 ### Removed
 
