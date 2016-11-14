@@ -15,9 +15,8 @@ Contents:
    :maxdepth: 2
 
    quickstart
-   modules
-   tests
-   gen_docs
+   debinterface
+   dev
 
 
 Indices and tables
