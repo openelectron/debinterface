@@ -6,7 +6,6 @@ Welcome to Debinterface's documentation!
 ========================================
 
 This is a simple Python library for dealing with the /etc/network/interfaces file in most Debian based distributions.
-This is forked from https://github.com/dggreenbaum/debinterface to refactor it.
 Documentation is sparse right now, but will be improved soon !
 
 Contents:
