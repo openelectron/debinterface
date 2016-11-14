@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-"""The NetworkAdapter class represents an interface and its configuration
-from the /etc/network/interfaces.
-It tries to validate data before writting, but it is by no means fool proof.
-It has setter for many common options, but it is impossible to have setter for
-every options on earth !
+"""The NetworkAdapterValidation tries to validate data before writting,
+but it is by no means fool proof as it is impossible to have checks
+for everything as any package can add its keys.
 """
-from __future__ import print_function, with_statement
+from __future__ import print_function, with_statement, absolute_import
 import socket
 
 
@@ -90,7 +88,11 @@ REQUIRED_FAMILY_OPTS = {
 }
 
 class NetworkAdapterValidation(object):
-    """ A representation a network adapter. """
+    """Class to validate an adapter. It validates some options for:
+        - presence
+        - type
+        - authorized values
+    """
 
     def validate_all(self, if_attributes):
         """ Not thorough validations... and quick coded.

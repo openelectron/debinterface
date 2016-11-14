@@ -5,7 +5,7 @@ It tries to validate data before writting, but it is by no means fool proof.
 It has setter for many common options, but it is impossible to have setter for
 every options on earth !
 """
-from __future__ import print_function, with_statement
+from __future__ import print_function, with_statement, absolute_import
 import socket
 from .adapterValidation import NetworkAdapterValidation, VALID_OPTS
 
@@ -216,7 +216,7 @@ class NetworkAdapter(object):
 
             Args:
                 opts (dict): a dictionary mapping option names and values.
-                    In the interfaces file, options will have a 'bridge_' prefix.
+                    In the interfaces file, options will have a bridge prefix.
 
             Raises:
                 ValueError: if there is a validation error

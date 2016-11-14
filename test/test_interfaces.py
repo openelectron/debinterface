@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import unittest
-from debinterface.interfaces import Interfaces
+from ..debinterface import Interfaces
 
 
 INF_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "interfaces.txt")

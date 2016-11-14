@@ -4,7 +4,7 @@ import socket
 import copy
 import filecmp
 import tempfile
-from debinterface.dnsmasqRange import DnsmasqRange, DEFAULT_CONFIG
+from ..debinterface import DnsmasqRange, DNSMASQ_DEFAULT_CONFIG
 
 
 DEFAULT_CONTENT = '''
@@ -24,13 +24,13 @@ class TestDnsmasqRange(unittest.TestCase):
             source.flush()
             dns = DnsmasqRange(source.name)
             dns.read()
-            self.assertDictEqual(dns.config, DEFAULT_CONFIG)
+            self.assertDictEqual(dns.config, DNSMASQ_DEFAULT_CONFIG)
 
     def test_write(self):
         self.maxDiff = None
         with tempfile.NamedTemporaryFile() as source:
             dns = DnsmasqRange(source.name)
-            dns._config = copy.deepcopy(DEFAULT_CONFIG)
+            dns._config = copy.deepcopy(DNSMASQ_DEFAULT_CONFIG)
             dns.write()
             source.flush()
             content = open(source.name).read().decode("ascii").replace("\n", "")
@@ -45,13 +45,13 @@ class TestDnsmasqRange(unittest.TestCase):
     def test_validate_valid(self):
         """Test validate with valid data"""
         dns = DnsmasqRange("fdlkfdl")
-        dns._config = copy.deepcopy(DEFAULT_CONFIG)
+        dns._config = copy.deepcopy(DNSMASQ_DEFAULT_CONFIG)
         self.assertEqual(dns.validate(), True)
 
     def test_validate_invalid_ip(self):
         """Test validate with false data"""
         dns = DnsmasqRange("fdlkfdl")
-        invalid = copy.deepcopy(DEFAULT_CONFIG)
+        invalid = copy.deepcopy(DNSMASQ_DEFAULT_CONFIG)
         invalid["dhcp-range"][0]["start"] = "fdjfdd"
         dns._config = invalid
         with self.assertRaises(socket.error):
@@ -60,21 +60,21 @@ class TestDnsmasqRange(unittest.TestCase):
     def test_set(self):
         """Test set dhcp-range"""
         dns = DnsmasqRange("fdlkfdl")
-        dns.set("dhcp-range", copy.deepcopy(DEFAULT_CONFIG["dhcp-range"][0]))
+        dns.set("dhcp-range", copy.deepcopy(DNSMASQ_DEFAULT_CONFIG["dhcp-range"][0]))
         nb_range = len(dns.config["dhcp-range"])
         self.assertEqual(nb_range, 1)
-        self.assertDictEqual(dns.config["dhcp-range"][0], DEFAULT_CONFIG["dhcp-range"][0])
+        self.assertDictEqual(dns.config["dhcp-range"][0], DNSMASQ_DEFAULT_CONFIG["dhcp-range"][0])
 
     def test_set_multiple_times(self):
         """Test set dhcp-range with many times the same value
         We should not have duplicates
         """
         dns = DnsmasqRange("fdlkfdl")
-        dns.set("dhcp-range", copy.deepcopy(DEFAULT_CONFIG["dhcp-range"][0]))
-        dns.set("dhcp-range", copy.deepcopy(DEFAULT_CONFIG["dhcp-range"][0]))
+        dns.set("dhcp-range", copy.deepcopy(DNSMASQ_DEFAULT_CONFIG["dhcp-range"][0]))
+        dns.set("dhcp-range", copy.deepcopy(DNSMASQ_DEFAULT_CONFIG["dhcp-range"][0]))
         nb_range = len(dns.config["dhcp-range"])
         self.assertEqual(nb_range, 1)
-        self.assertDictEqual(dns.config["dhcp-range"][0], DEFAULT_CONFIG["dhcp-range"][0])
+        self.assertDictEqual(dns.config["dhcp-range"][0], DNSMASQ_DEFAULT_CONFIG["dhcp-range"][0])
 
     def test_backup(self):
         with tempfile.NamedTemporaryFile() as source:
@@ -111,7 +111,7 @@ class TestDnsmasqRange(unittest.TestCase):
 
     def test_update_range(self):
         dns = DnsmasqRange("fdsfddf")
-        dns._config = copy.deepcopy(DEFAULT_CONFIG)
+        dns._config = copy.deepcopy(DNSMASQ_DEFAULT_CONFIG)
         expected = {
             "interface": 'wlan0',
             "start": '192.192.192.2',

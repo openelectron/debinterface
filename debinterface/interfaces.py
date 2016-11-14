@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 # A class representing the contents of /etc/network/interfaces
-from debinterface.interfacesWriter import InterfacesWriter
-from debinterface.interfacesReader import InterfacesReader
-from debinterface.adapter import NetworkAdapter
-import debinterface.toolutils as toolutils
+from __future__ import print_function, with_statement, absolute_import
+from .interfacesWriter import InterfacesWriter
+from .interfacesReader import InterfacesReader
+from .adapter import NetworkAdapter
+from . import toolutils
 
 
 class Interfaces(object):
@@ -72,8 +73,8 @@ class Interfaces(object):
 
     def addAdapter(self, options, index=None):
         """Insert a NetworkAdapter before the given index
-        or at the end of the list.
-            options should be a string (name) or a dict
+            or at the end of the list.
+            Options should be a string (name) or a dict
 
             Args:
                 options (string or dict): options to build a network adaptator

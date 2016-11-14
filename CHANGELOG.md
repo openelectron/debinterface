@@ -5,6 +5,8 @@ From http://keepachangelog.com
 
 ## [Unreleased][unreleased]
 ### Added
+- Docs to read the docs :-)
+
 ### Changed
 - dnsmasqRange.rm_itf_range returns False is nothing was changed
 - Removed validation code from NetworkAdapter to its own class

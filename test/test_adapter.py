@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import os
 import unittest
-from debinterface.adapter import NetworkAdapter
+from ..debinterface import NetworkAdapter
 
 
 class TestNetworkAdapter(unittest.TestCase):

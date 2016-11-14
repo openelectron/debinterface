@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function, with_statement
+from __future__ import print_function, with_statement, absolute_import
 import os
 import unittest
 import tempfile
-from debinterface.interfacesReader import InterfacesReader
-from debinterface.interfacesWriter import InterfacesWriter
-from debinterface.adapter import NetworkAdapter
+from ..debinterface import InterfacesReader, InterfacesWriter, NetworkAdapter
 
 
 INF_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "interfaces.txt")

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # Write interface
-from __future__ import print_function, with_statement
+from __future__ import print_function, with_statement, absolute_import
 import shutil
 from string import Template
 
-import debinterface.toolutils as toolutils
+from . import toolutils
 
 
 class InterfacesWriter(object):
@@ -58,7 +58,8 @@ class InterfacesWriter(object):
 
     def _check_interfaces(self, interfaces_path):
         """Uses ifup to check interfaces file. If it is not in the
-        default place, each interface must be checked one by one.
+            default place, each interface must be checked one by one.
+
             Args:
                 interfaces_path (string) : the path to interfaces file
 

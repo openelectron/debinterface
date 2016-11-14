@@ -10,3 +10,5 @@ debinterface.egg-info/
 dist/
 .tox
 *.sublime-*
+.cache
+.coverage

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function, with_statement, absolute_import
 import copy
 import os
 import shutil
 import socket
 
-import debinterface.toolutils as toolutils
+from . import toolutils
 
 
 DEFAULT_CONFIG = {
@@ -72,7 +73,7 @@ class DnsmasqRange(object):
             for rng in self._config["dhcp-range"]:
                 for key in required:
                     if key not in rng:
-                        raise ValueError("Missing option : {0}".format(k))
+                        raise ValueError("Missing option : {0}".format(key))
                 if socket.inet_aton(rng["end"]) < socket.inet_aton(rng["start"]):
                     raise ValueError("Start IP range must be before end IP")
                 return True
@@ -87,7 +88,8 @@ class DnsmasqRange(object):
 
     def update_range(self, interface, start, end, lease_time):
         """Update existing range based on the interface name
-        If does not exist will be created
+            If does not exist will be created
+
             Args:
                 interface (str): interface name
                 start (str) : start ip of range

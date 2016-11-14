@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function, with_statement, absolute_import
 import os
 import tempfile
 from contextlib import contextmanager

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # A class representing the contents of /etc/network/interfaces
-
-from debinterface.adapter import NetworkAdapter
+from __future__ import print_function, with_statement, absolute_import
+from .adapter import NetworkAdapter
 
 
 class InterfacesReader(object):

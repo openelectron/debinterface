@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function, with_statement, absolute_import
 import os
 import shutil
 
-import debinterface.toolutils as toolutils
+from . import toolutils
 
 
 class Hostapd(object):
