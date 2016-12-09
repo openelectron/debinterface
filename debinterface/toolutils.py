@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, with_statement, absolute_import
 import os
+import stat
 import tempfile
 from contextlib import contextmanager
 import subprocess
@@ -48,3 +49,5 @@ def atomic_write(filepath):
             tmp.flush()
             os.fsync(tmp.fileno())
         os.rename(tempf.name, realpath)
+        os.chmod(realpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+        
