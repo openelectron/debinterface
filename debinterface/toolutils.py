@@ -50,5 +50,5 @@ def atomic_write(filepath):
             tmp.flush()
             os.fsync(tmp.fileno())
         os.rename(tempf.name, realpath)
-        os.chmod(realpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
-        
+        os.chmod(realpath,
+                 stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
