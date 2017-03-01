@@ -3,20 +3,24 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 From http://keepachangelog.com
 
-## 3.1.0 - [unreleased]
+## 3.1.0 - 2017-03-01
 ### Added
 - Docs to read the docs :-)
 - Class can be imported more easily as in the example : from debinterface import Interfaces
+- DeprecationWarning for hotplug key, will be changed to allow-hotplug in 4.0
 
 ### Changed
+- PR from mchubby: chmod destination file to 0644
 - dnsmasqRange.rm_itf_range returns False is nothing was changed
 - Removed validation code from NetworkAdapter to its own class
+- Do not backup/restore if creating a new interfaces file
 
 ### Fixed
 - shutil.copy is replaced by os.rename which is atomic
 - bad if/else
 - failing tests
 - NetworkAdapter : missing pre-down, post-up functions
+- ifup command was not an absolute path (thanks @ymolinet)
 
 
 ## 3.0.1 - 2016-09-15
