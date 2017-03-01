@@ -8,7 +8,7 @@ import socket
 
 
 VALID_OPTS = {
-    'hotplug': {'type': bool},
+    'hotplug': {'type': bool},  # Beware, option is really called allow-hotplug
     'auto': {'type': bool},
     'name': {'required': True},
     'address': {'type': 'IP'},

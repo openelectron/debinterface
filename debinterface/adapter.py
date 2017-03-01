@@ -185,6 +185,8 @@ class NetworkAdapter(object):
 
     def setHotplug(self, hotplug):
         """ Set the option to allow hotplug on the interface.
+        Beware, option is really called allow-hotplug, that's a
+        small historic cruft...
 
             Args:
                 hotplug (bool): interface hotplug will be set if True
