@@ -7,6 +7,7 @@ every options on earth !
 """
 from __future__ import print_function, with_statement, absolute_import
 import socket
+import warnings
 from .adapterValidation import NetworkAdapterValidation, VALID_OPTS
 
 
@@ -194,6 +195,9 @@ class NetworkAdapter(object):
             Raises:
                 ValueError: if there is a validation error
         """
+
+        msg = "hotplug key will be renamed into allow-hotplug in 4.0"
+        warnings.warn(msg, DeprecationWarning)
 
         self._validator.validate_one(
             'hotplug', VALID_OPTS['hotplug'], hotplug)
