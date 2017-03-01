@@ -4,3 +4,4 @@
 * dimagafurov https://github.com/dimagafurov
 * Namgon Kim https://github.com/ngkim
 * Julian Scheel https://github.com/julianscheel
+* mchubby https://github.com/mchubby
