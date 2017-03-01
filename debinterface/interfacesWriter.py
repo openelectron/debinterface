@@ -2,6 +2,7 @@
 # Write interface
 from __future__ import print_function, with_statement, absolute_import
 import shutil
+import os
 from string import Template
 
 from . import toolutils
@@ -201,13 +202,37 @@ class InterfacesWriter(object):
             pass
 
     def _backup_interfaces(self):
-        """ return True/False, command output """
+        """Backup interfaces file is the file exists
 
-        if self._backup_path:
-            shutil.copy(self._interfaces_path, self._backup_path)
+            Returns:
+                True/False, command output
+
+            Raises:
+                IOError : if the copy fails and the source file exists
+        """
+
+        try:
+            if self._backup_path:
+                shutil.copy(self._interfaces_path, self._backup_path)
+        except IOError as ex:
+            # Only raise if source actually exists
+            if os.path.exists(self._interfaces_path):
+                raise ex
 
     def _restore_interfaces(self):
-        """ return True/False, command output """
+        """Restore interfaces file is the file exists
 
-        if self._backup_path:
-            shutil.copy(self._backup_path, self._interfaces_path)
+            Returns:
+                True/False, command output
+
+            Raises:
+                IOError : if the copy fails and the source file exists
+        """
+
+        try:
+            if self._backup_path:
+                shutil.copy(self._backup_path, self._interfaces_path)
+        except IOError as ex:
+            # Only raise if source actually exists
+            if os.path.exists(self._backup_path):
+                raise ex
