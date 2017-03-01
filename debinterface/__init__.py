@@ -2,7 +2,8 @@
 """Imports for easier use"""
 from .adapter import NetworkAdapter
 from .adapterValidation import NetworkAdapterValidation
-from .dnsmasqRange import DnsmasqRange, DEFAULT_CONFIG as DNSMASQ_DEFAULT_CONFIG
+from .dnsmasqRange import (DnsmasqRange,
+                           DEFAULT_CONFIG as DNSMASQ_DEFAULT_CONFIG)
 from .hostapd import Hostapd
 from .interfaces import Interfaces
 from .interfacesReader import InterfacesReader

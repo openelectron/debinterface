@@ -16,9 +16,12 @@ class Interfaces(object):
         """ By default read interface file on init
 
             Args:
-                update_adapters (bool, optional): load adapters from interface file. Default True
-                interfaces_path (str, optional): default to /etc/network/interfaces
-                backup_path (str, optional): default to /etc/network/interfaces.bak
+                update_adapters (bool, optional): load adapters from interface
+                    file. Default True
+                interfaces_path (str, optional): default to
+                    /etc/network/interfaces
+                backup_path (str, optional): default to
+                    /etc/network/interfaces.bak
         """
 
         self._set_paths(interfaces_path, backup_path)

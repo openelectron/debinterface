@@ -3,7 +3,7 @@ from __future__ import print_function, with_statement, absolute_import
 import copy
 import os
 import shutil
-import socket
+from socket import inet_aton
 
 from . import toolutils
 
@@ -74,7 +74,7 @@ class DnsmasqRange(object):
                 for key in required:
                     if key not in rng:
                         raise ValueError("Missing option : {0}".format(key))
-                if socket.inet_aton(rng["end"]) < socket.inet_aton(rng["start"]):
+                if inet_aton(rng["end"]) < inet_aton(rng["start"]):
                     raise ValueError("Start IP range must be before end IP")
                 return True
             itf_names = [
@@ -82,7 +82,8 @@ class DnsmasqRange(object):
                 for data in self._config["dhcp-range"]
             ]
             if len(itf_names) != set(itf_names):
-                raise ValueError("Multiple interfaces with the same name")
+                msg = "Multiple interfaces with the same name"
+                raise ValueError(msg)
         except KeyError:
             pass  # dhcp-range is not mandatory
 
@@ -131,7 +132,10 @@ class DnsmasqRange(object):
 
         if "dhcp-range" in self._config:
             current_len = len(self._config['dhcp-range'])
-            self._config['dhcp-range'][:] = [x for x in self._config['dhcp-range'] if x["interface"] != if_name]
+            self._config['dhcp-range'][:] = [
+                x for x in self._config['dhcp-range']
+                if x["interface"] != if_name
+            ]
             if len(self._config['dhcp-range']) < current_len:
                 return True
         return False

@@ -87,6 +87,7 @@ REQUIRED_FAMILY_OPTS = {
     }
 }
 
+
 class NetworkAdapterValidation(object):
     """Class to validate an adapter. It validates some options for:
         - presence
@@ -121,10 +122,12 @@ class NetworkAdapterValidation(object):
                 ))
             for source_opt in source_opts:
                 if source_opt not in if_attributes:
-                    raise ValueError("Option {} is required for source {} in family {}"
-                                     ".".format(source_opt,
-                                                if_attributes["source"],
-                                                if_attributes["addrFam"]))
+                    msg = "Option {} is required for source {} in family {}."
+                    raise ValueError(msg.format(
+                        source_opt,
+                        if_attributes["source"],
+                        if_attributes["addrFam"]
+                    ))
 
     def validate_one(self, opt, validations, val):
         """ Not thorough validations... and quick coded.

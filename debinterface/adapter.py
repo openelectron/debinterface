@@ -78,7 +78,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('addrFam', VALID_OPTS['addrFam'], address_family)
+        self._validator.validate_one(
+            'addrFam', VALID_OPTS['addrFam'], address_family)
         self._ifAttributes['addrFam'] = address_family
 
     def setAddressSource(self, address_source):
@@ -94,7 +95,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('source', VALID_OPTS['source'], address_source)
+        self._validator.validate_one(
+            'source', VALID_OPTS['source'], address_source)
         self._ifAttributes['source'] = address_source
 
     def setAddress(self, ip_address):
@@ -107,7 +109,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('address', VALID_OPTS['address'], ip_address)
+        self._validator.validate_one(
+            'address', VALID_OPTS['address'], ip_address)
         self._ifAttributes['address'] = ip_address
 
     def setNetmask(self, netmask):
@@ -120,7 +123,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('netmask', VALID_OPTS['netmask'], netmask)
+        self._validator.validate_one(
+            'netmask', VALID_OPTS['netmask'], netmask)
         self._ifAttributes['netmask'] = netmask
 
     def setGateway(self, gateway):
@@ -133,7 +137,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('gateway', VALID_OPTS['gateway'], gateway)
+        self._validator.validate_one(
+            'gateway', VALID_OPTS['gateway'], gateway)
         self._ifAttributes['gateway'] = gateway
 
     def setBroadcast(self, broadcast):
@@ -146,7 +151,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('broadcast', VALID_OPTS['broadcast'], broadcast)
+        self._validator.validate_one(
+            'broadcast', VALID_OPTS['broadcast'], broadcast)
         self._ifAttributes['broadcast'] = broadcast
 
     def setNetwork(self, network):
@@ -159,7 +165,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('network', VALID_OPTS['network'], network)
+        self._validator.validate_one(
+            'network', VALID_OPTS['network'], network)
         self._ifAttributes['network'] = network
 
     def setAuto(self, auto):
@@ -172,7 +179,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('auto', VALID_OPTS['auto'], auto)
+        self._validator.validate_one(
+            'auto', VALID_OPTS['auto'], auto)
         self._ifAttributes['auto'] = auto
 
     def setHotplug(self, hotplug):
@@ -185,7 +193,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('hotplug', VALID_OPTS['hotplug'], hotplug)
+        self._validator.validate_one(
+            'hotplug', VALID_OPTS['hotplug'], hotplug)
         self._ifAttributes['hotplug'] = hotplug
 
     def setHostapd(self, hostapd):
@@ -195,7 +204,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('hostapd', VALID_OPTS['hostapd'], hostapd)
+        self._validator.validate_one(
+            'hostapd', VALID_OPTS['hostapd'], hostapd)
         self._ifAttributes['hostapd'] = hostapd
 
     def setDnsNameservers(self, nameservers):
@@ -208,7 +218,8 @@ class NetworkAdapter(object):
                 ValueError: if there is a validation error
         """
 
-        self._validator.validate_one('dns-nameservers', VALID_OPTS['dns-nameservers'], nameservers)
+        self._validator.validate_one(
+            'dns-nameservers', VALID_OPTS['dns-nameservers'], nameservers)
         self._ifAttributes['dns-nameservers'] = nameservers
 
     def setBropts(self, opts):
@@ -223,7 +234,8 @@ class NetworkAdapter(object):
 
         """
 
-        self._validator.validate_one('bridge-opts', VALID_OPTS['bridge-opts'], opts)
+        self._validator.validate_one(
+            'bridge-opts', VALID_OPTS['bridge-opts'], opts)
         self._ifAttributes['bridge-opts'] = opts
 
     def replaceBropt(self, key, value):
@@ -413,8 +425,9 @@ class NetworkAdapter(object):
         or all given options if options is a dict
 
             Args:
-                options (str/dict): historical code... set only the name if options is a str,
-                    or all given options if options is a dict
+                options (str/dict): historical code... only set
+                    the name if options is a str, or all given
+                    options if options is a dict
 
             Raises:
                 ValueError: if validation error
@@ -460,7 +473,8 @@ class NetworkAdapter(object):
                 self.reset()
                 raise
         else:
-            raise ValueError("No arguments given. Provide a name or options dict.")
+            msg = "No arguments given. Provide a name or options dict."
+            raise ValueError(msg)
 
     @staticmethod
     def _ensure_list(dic, key, value):
@@ -470,7 +484,8 @@ class NetworkAdapter(object):
             Args:
                 dic (dict): source dict
                 key (string): key to use in dic
-                value (any): the data. Will be appended into a list if it's not one
+                value (any): the data. Will be appended into a
+                    list if it's not one
         """
         if key not in dic:
             dic[key] = []

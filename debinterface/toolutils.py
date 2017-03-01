@@ -34,7 +34,8 @@ def safe_subprocess(command_array):
 @contextmanager
 def atomic_write(filepath):
     """
-        Writeable file object that atomically updates a file (using a temporary file).
+        Writeable file object that atomically updates a file
+            (using a temporary file).
 
         Args:
             filepath (str): the file path to be opened

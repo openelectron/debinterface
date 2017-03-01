@@ -9,3 +9,9 @@ recursive-include test *.txt
 # added by check_manifest.py
 include *.sh
 include tox.ini
+
+include *.py
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
+.pylintrc

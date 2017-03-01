@@ -28,7 +28,8 @@ class Hostapd(object):
             self._config[str(key).strip()] = value
 
     def validate(self):
-        """Not sure which ones are really necessary for everyone, here are the ones I require
+        """Not sure which ones are really necessary for everyone,
+            here are the ones I require.
             I created 4 groups of keys : basic must always be there,
             wireless if you want to be an AP, auth if you want to add
             some security, bridge for, well, bridging
