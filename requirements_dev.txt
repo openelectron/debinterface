@@ -49,7 +49,7 @@ snowballstemmer==1.2.1
 Sphinx==1.5.3
 sphinx-autobuild==0.6.0
 sphinx-rtd-theme==0.2.0
-sphinxcontrib-napoleon==0.5.3
+sphinxcontrib-napoleon==0.6.1
 tornado==4.4.2
 traitlets==4.3.1
 twine==1.8.1
