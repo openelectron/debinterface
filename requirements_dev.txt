@@ -11,7 +11,7 @@ check-manifest==0.35
 clint==0.5.1
 configparser==3.5.0
 coverage==4.3.4
-decorator==4.0.10
+decorator==4.0.11
 docutils==0.12
 enum34==1.1.6
 imagesize==0.7.1
