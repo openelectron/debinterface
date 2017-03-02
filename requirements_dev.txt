@@ -23,7 +23,7 @@ Jinja2==2.9.5
 lazy-object-proxy==1.2.2
 livereload==2.5.1
 MarkupSafe==0.23
-mccabe==0.5.2
+mccabe==0.6.1
 pathlib2==2.1.0
 pathtools==0.1.2
 pexpect==4.2.1
