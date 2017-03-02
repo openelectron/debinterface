@@ -19,7 +19,7 @@ ipdb==0.10.2
 ipython==5.3.0
 ipython-genutils==0.1.0
 isort==4.2.5
-Jinja2==2.8
+Jinja2==2.9.5
 lazy-object-proxy==1.2.2
 livereload==2.4.1
 MarkupSafe==0.23
