@@ -12,7 +12,7 @@ clint==0.5.1
 configparser==3.5.0
 coverage==4.3.4
 decorator==4.0.11
-docutils==0.12
+docutils==0.13.1
 enum34==1.1.6
 imagesize==0.7.1
 ipdb==0.10.1
