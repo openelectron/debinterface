@@ -38,7 +38,7 @@ Pygments==2.2.0
 pylint==1.6.5
 pytest==3.0.6
 pytest-cov==2.4.0
-pytz==2016.7
+pytz==2016.10
 PyYAML==3.12
 requests==2.11.1
 requests-toolbelt==0.7.0
