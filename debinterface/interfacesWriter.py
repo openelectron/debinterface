@@ -74,13 +74,13 @@ class InterfacesWriter(object):
 
         if interfaces_path == "/etc/network/interfaces":
             ret, output = toolutils.safe_subprocess([
-                "/sbin/ifup", "-a", "--no-act"
+                "/sbin/ifup", "-a", "-n"
             ])
         else:
             for adapter in self._adapters:
                 ret, output = toolutils.safe_subprocess([
                     "/sbin/ifup", "-nf",
-                    "-i {0}".format(interfaces_path),
+                    "-i{0}".format(interfaces_path),
                     adapter.attributes["name"]
                 ])
                 if not ret:
